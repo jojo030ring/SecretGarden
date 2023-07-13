@@ -1,0 +1,25 @@
+* {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.jumbotron {
+    background-image : url('/resource/secret_garden.jpg');
+    height: 300px;
+
+}
+.jumbotron > div > h1{
+    font-family: 'Nanum Myeongjo', serif;
+    font-weight: bold;
+    font-size : 32px;
+    color : white;
+    
+}
+.jumbotron> div > p {
+    font-family: 'Nanum Myeongjo', serif;
+
+}
+
+a {
+    text-decoration: none;
+    color:black;   
+}
