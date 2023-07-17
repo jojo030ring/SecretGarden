@@ -1,10 +1,11 @@
 spring:
   datasource:
-    hikari:
-      username: test
-      password: test
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://192.168.0.201:3306:3306/secretgarden?useUnicode=true&characterEncoding=utf-8
+    dbcp2:
+      driver: com.mysql.cj.jdbc.Driver
+    username: test
+    password: test
+    url: jdbc:mysql://192.168.0.201:3306/test?useUnicode=true&characterEncoding=utf-8
+
   jpa:
     properties:
       hibernate:
@@ -14,6 +15,7 @@ spring:
 
     hibernate:
       ddl-auto: create
+
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -23,6 +25,9 @@ spring:
   devtools:
     livereload:
       enabled: true
+
+  mvc:
+    static-path-pattern: classpath:/**
 
 
 #spring.thymeleaf.check-template-location=true
