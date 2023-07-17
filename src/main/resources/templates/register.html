@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,8 +16,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
     <!--개인적으로 생성한 css-->
-    <link href="css/main/index.css" rel="stylesheet">
+    <link href="../static/css/main/index.css" rel="stylesheet">
+    <script
+            src="https://code.jquery.com/jquery-3.7.0.slim.js"
+            integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c="
+            crossorigin="anonymous"></script>
 
+    <script>
+        $(document).ready(function() {
+            if($("#domain option:selected").val()!='1') {
+                $("#user_domain").val($("#domain option:selected").text());
+                alert($("#domain option:selected").text())//선택값 입력
+                $("#user_domain").attr("disabled",true); //비활성화
+            }
+
+            $("#domain option:selected").each(function () {
+                $('#domain').change(function(){
+
+                    if($(this).val()== '1'){ //직접입력일 경우
+                        $("#user_domain").val('');                        //값 초기화
+                        $("#user_domain").attr("disabled",false); //활성화
+                    }else{ //직접입력이 아닐경우
+                        $("#user_domain").val($(this).text());      //선택값 입력
+                        $("#user_domain").attr("disabled",true); //비활성화
+                    }
+                });
+            });
+        });
+
+
+    </script>
 
     <title>Document</title>
 </head>
@@ -94,36 +122,38 @@
     </header>
     <!--------------------- main ------------------->
     <main>
-        <form>
+        <form action="/secretgarden/register" method="post">
             <div class="input-group mx-auto w-25 mt-5 border border-secondary p-4 mb-5">
                 <h1 class="display-5 mb-3">Register</h1>
                     <div class="mb-3 col-md-12 form-floating">
-                        <input type="text" class="form-control" id="id" placeholder="input id">
+                        <input type="text" class="form-control" name="id" id="id" placeholder="input id">
                         <label for="id">아이디</label>
                     </div>
                     <div class="mb-3 col-md-12 form-floating">
-                        <input type="password" class="form-control" id="password" placeholder="input pw">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="input pw">
                         <label for="password">패스워드</label>
                     </div>
                     <div class="mb-3 col-md-12 form-floating">
-                        <input type="name" class="form-control" id="name" placeholder="input name">
+                        <input type="name" class="form-control" name="name" id="name" placeholder="input name">
                         <label for="name">이름</label>
                     </div>
                     <div class="mb-3 d-flex flex-row align-items-stretch form-floating">
-                            <input type="email" class="form-control" id="email" placeholder="input email">
-                            <label for="email">이메일</label>             
+                            <input type="text" class="form-control" name="email_id" id="email_id" placeholder="input id">
+                            <label for="email_id">이메일</label>
                             <span class="input-group-text">@</span>
+                            <input type="text" class="form-control" name="user_domain" id="user_domain" placeholder="input domain">
+
                     </div>
-                    <!-- 직접 입력부분 > react -->
-                        <select class="form-select form-select-lg mb-3" aria-label="server-name">
-                            <option selected>naver.com</option>
-                            <option value="gmail.com">gmail.com</option>
-                            <option value="daum.net">daum.net</option>
-                            <option value="#">직접입력</option>
-                        </select>
+                <!-- 직접 입력부분 > react -->
+                    <select class="form-select form-select-lg mb-3" aria-label="server-name" id="domain">
+                        <option selected value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                        <option value="1">직접입력</option>
+                    </select>
                     <div class="mb-3 col-md-12 form-floating">
-                        <input type="password" class="form-control" id="password" placeholder="input pw">
-                        <label for="password">H.P</label>
+                        <input type="text" class="form-control" id="phonenum" name="phonenum" placeholder="input pw">
+                        <label for="phonenum">H.P</label>
                     </div>
                     <div class="mb-3 col-md-12 d-flex flex-row justify-content-md-evenly">
                         <button type="submit" class="btn btn-outline-success px-5">회원가입</button>

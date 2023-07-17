@@ -2,9 +2,9 @@ spring:
   datasource:
     dbcp2:
       driver: com.mysql.cj.jdbc.Driver
-    username: test
-    password: test
-    url: jdbc:mysql://192.168.0.201:3306/test?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 1234
+    url: jdbc:mysql://localhost:3306/secretgarden?useUnicode=true&characterEncoding=utf-8
 
   jpa:
     properties:
@@ -26,9 +26,12 @@ spring:
     livereload:
       enabled: true
 
-  mvc:
-    static-path-pattern: classpath:/**
-
+#  mvc:
+#    static-path-pattern: /static/**
+#  web:
+#    resources:
+#      static-locations: classpath:/static/
+#      add-mappings: true
 
 #spring.thymeleaf.check-template-location=true
 
