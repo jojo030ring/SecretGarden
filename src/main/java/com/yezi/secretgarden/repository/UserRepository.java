@@ -14,12 +14,11 @@ public class UserRepository {
     EntityManager em;
     @Transactional
     public void save(UserRegisterRequest uRRequest) {
-        User user = User.builder().userId(uRRequest.getId())
-                .email(uRRequest.getEmail_id()+"@"+uRRequest.getUser_domain())
+        User user = User.builder().id(uRRequest.getId())
                 .name(uRRequest.getName())
-                .password(uRRequest.getPassword())
-                .phonenum(uRRequest.getPhonenum()).build();
-
+                        .email(uRRequest.getEmail_id()+"@"+uRRequest.getUser_domain())
+                                .password(uRRequest.getPassword())
+                                        .phonenum(uRRequest.getPhonenum()).build();
         em.persist(user);
     }
     public User findOne(String id) {

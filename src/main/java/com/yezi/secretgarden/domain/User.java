@@ -3,7 +3,7 @@ package com.yezi.secretgarden.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import net.bytebuddy.asm.Advice;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,10 +14,11 @@ import java.util.List;
 @Table(name="user")
 @Getter
 @Setter
+@ToString
 public class User {
     @Id
     @Column(name="user_id")
-    private String userId;
+    private String id;
     private String password;
     private String name;
     private String email;
@@ -33,16 +34,20 @@ public class User {
 
     // 생성 메서드 //
     @Builder
-    public User (String userId, String password, String name, String email, String phonenum) {
-        this.userId=userId;
+    public User (String id, String password, String name, String email, String phonenum) {
+        this.id=id;
         this.password=password;
         this.name = name;
         this.email=email;
         this.phonenum=phonenum;
+        this.regDate=LocalDateTime.now();
+
     }
 
 
     public User() {
 
     }
+
+
 }

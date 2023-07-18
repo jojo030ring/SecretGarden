@@ -25,6 +25,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+	implementation 'com.google.code.gson:gson:2.9.0'
+	// spring validation
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-validation:2.7.4'
+		// Spring Boot validation
+	}
+
+
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'

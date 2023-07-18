@@ -24,10 +24,11 @@
 
     <script>
         $(document).ready(function() {
-            if($("#domain option:selected").val()!='1') {
-                $("#user_domain").val($("#domain option:selected").text());
-                alert($("#domain option:selected").text())//선택값 입력
-                $("#user_domain").attr("disabled",true); //비활성화
+            let selectedValue = $("#domain option:selected").val();
+            let userDomain = $("#user_domain")
+            if(selectedValue!='1') {
+                userDomain.val(selectedValue);
+                $("#user_domain").attr("readOnly",true); //비활성화
             }
 
             $("#domain option:selected").each(function () {
@@ -35,15 +36,51 @@
 
                     if($(this).val()== '1'){ //직접입력일 경우
                         $("#user_domain").val('');                        //값 초기화
-                        $("#user_domain").attr("disabled",false); //활성화
+                        $("#user_domain").attr("readOnly",false); //활성화
                     }else{ //직접입력이 아닐경우
                         $("#user_domain").val($(this).text());      //선택값 입력
-                        $("#user_domain").attr("disabled",true); //비활성화
+                        $("#user_domain").attr("readOnly",true); //비활성화
                     }
                 });
             });
-        });
 
+            $("#form").submit(function() {
+                alert(1);
+               //submitData();
+            });
+
+
+        });
+        // function submitData() {
+        //     let form = $("#form");
+        //     let sendData = {
+        //         id: form.id,
+        //         password: form.password,
+        //       name: form.name,
+        //         email_id:form.email_id,
+        //         user_domain:form.select().user_domain,
+        //         phonenum:form.phonenum
+        //     };
+        //     $.ajax({
+        //         url:"/secretgarden/register",
+        //         data:JSON.stringify(sendData),
+        //         type:"POST",
+        //         async: true,
+        //         timeout: 5000,
+        //         dataType: "JSON",
+        //         contentType: "application/json; charset=utf-8",
+        //
+        //         success: function(response) {
+        //             alert("성공!");
+        //             location.replace("/");
+        //         },
+        //         error: function(response) {
+        //             console.log(JSON.stringify(response));
+        //         }
+        //
+        //     });
+
+        //}
 
     </script>
 
@@ -122,7 +159,7 @@
     </header>
     <!--------------------- main ------------------->
     <main>
-        <form action="/secretgarden/register" method="post">
+        <form action="/secretgarden/register" method="post" id="form">
             <div class="input-group mx-auto w-25 mt-5 border border-secondary p-4 mb-5">
                 <h1 class="display-5 mb-3">Register</h1>
                     <div class="mb-3 col-md-12 form-floating">
