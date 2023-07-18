@@ -18,8 +18,8 @@
     <!--개인적으로 생성한 css-->
     <link href="../static/css/main/index.css" rel="stylesheet">
     <script
-            src="https://code.jquery.com/jquery-3.7.0.slim.js"
-            integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c="
+            src="https://code.jquery.com/jquery-3.7.0.js"
+            integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
             crossorigin="anonymous"></script>
 
     <script>
@@ -44,42 +44,37 @@
                 });
             });
 
-            $("#form").onsubmit(function(e) {
-                e.preventDefault();
-               submitData();
+            $("#registerBtn").click(function(event) {
+                submitData();
+                alert(1);
             });
 
 
         });
         function submitData() {
-            let form = $("#form");
-            let sendData = {
-                id: form.id,
-                password: form.password,
-                name: form.name,
-                email_id:form.email_id,
-                user_domain:form.select().user_domain,
-                phonenum:form.phonenum
-            };
+            let form = $("#form").serializeArray(); // json 데이터를 위한
+            let object = {};
+            for(let i=0;i<form.length;i++) {
+                object[form[i]['name']] = form[i]['value'];
+            }
+            // alert(JSON.stringify(object)); 잘 나옴
+
             $.ajax({
                 url:"/secretgarden/register",
-                data:JSON.stringify(sendData),
-                method:"POST",
-                async: true,
-                timeout: 50000,
-                dataType: "json",
-                headers : {"Content-Type" : "application/json"},
-                contentType: "application/json",
-
-                success: function(response) {
-                    alert("성공!");
-                    location.replace("/");
+                method:"post",
+                dataType:"json",
+                contentType:"application/json; charset=utf-8",
+                data:JSON.stringify(object),
+                success: function(json) {
+                    alert("success!");
+                    location.href="/";
                 },
-                error: function(response) {
-                    console.log(JSON.stringify(response));
+                error: function(request,status,error) {
+                    alert("error!");
                 }
-
             });
+
+
 
         }
 
@@ -160,7 +155,7 @@
     </header>
     <!--------------------- main ------------------->
     <main>
-        <form action="/secretgarden/register" method="post" id="form">
+        <form id="form">
             <div class="input-group mx-auto w-25 mt-5 border border-secondary p-4 mb-5">
                 <h1 class="display-5 mb-3">Register</h1>
                     <div class="mb-3 col-md-12 form-floating">
@@ -194,7 +189,7 @@
                         <label for="phonenum">H.P</label>
                     </div>
                     <div class="mb-3 col-md-12 d-flex flex-row justify-content-md-evenly">
-                        <button type="submit" class="btn btn-outline-success px-5">회원가입</button>
+                        <button type="button" class="btn btn-outline-success px-5" id="registerBtn">회원가입</button>
                         <a class="btn btn-outline-secondary px-5" href="./index.html" role="button">홈으로</a>
                     </div>
             </div>

@@ -4,24 +4,18 @@ import com.google.gson.Gson;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.UserRegisterRequest;
 import com.yezi.secretgarden.exception.InValidRegisterUserException;
-import com.yezi.secretgarden.repository.UserRepository;
 import com.yezi.secretgarden.service.LoggerService;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/secretgarden")
@@ -37,18 +31,28 @@ public class UserController {
     @PostMapping(
             value = "/register",
             headers="Accept=application/json")
+    @ResponseBody
     public String register( @Valid @RequestBody  UserRegisterRequest uRRequest,BindingResult bindingResult, Model m) {
+//        User user =
+
+        Gson gson = new Gson();
+        HashMap<String, String> map = new HashMap<>();
             if(!validate(bindingResult)) {
-                m.addAttribute("result", false);
+//                m.addAttribute("result", false);
                 throw new InValidRegisterUserException();
-//                return "redirect:/secretgarden/register";
+//                map.put("result","false");
+//                return gson.toJson(map);
 
             }else {
+                System.out.println(uRRequest);
                 userService.registerUser(uRRequest);
-                return "redirect:/secretgarden/";
+                map.put("result","true");
+                return gson.toJson(map);
 
             }
         }
+
+
 
     public boolean validate(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

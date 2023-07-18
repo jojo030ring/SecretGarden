@@ -18,18 +18,17 @@ import java.net.URI;
 public class ControllerAdvice {
     private final LoggerService loggerService;
     @ExceptionHandler(InValidRegisterUserException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ModelAndView handle(Exception e) {
-        loggerService.errorLoggerTest(e.getMessage());
-        return new ModelAndView("redirect:/", "msg", "검증 실패입니다. 관리자에게 문의하세요.");
-
-    }
-    //잘못된 방법 >> ResponseEntity를 넘겨주면 안됨
-//    public ResponseEntity<String> handle(Exception e) {
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public ModelAndView handle(Exception e) {
 //        loggerService.errorLoggerTest(e.getMessage());
-//        // redirect
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setLocation(URI.create("/error"));
-//        return new ResponseEntity<>(headers,HttpStatus.BAD_REQUEST);
+//        return new ModelAndView("redirect:/", "msg", "검증 실패입니다. 관리자에게 문의하세요.");
+//
 //    }
+    //잘못된 방법 >> ResponseEntity를 넘겨주면 안됨
+    public ResponseEntity<String> handle(Exception e) {
+        loggerService.errorLoggerTest(e.getMessage());
+        // redirect
+        String result = e.getMessage();
+        return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+    }
 }
