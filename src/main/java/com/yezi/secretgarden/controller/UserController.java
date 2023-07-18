@@ -34,7 +34,9 @@ public class UserController {
         return "register";
     }
 
-    @PostMapping("/register")
+    @PostMapping(
+            value = "/register",
+            headers="Accept=application/json")
     public String register( @Valid @RequestBody  UserRegisterRequest uRRequest,BindingResult bindingResult, Model m) {
             if(!validate(bindingResult)) {
                 m.addAttribute("result", false);
