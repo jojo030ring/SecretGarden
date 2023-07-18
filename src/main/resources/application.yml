@@ -53,7 +53,7 @@ logging:
   level:
     org.hibernate.sql: debug # logger??? debug? ??
 
-server:
-  error:
-    whitelabel:
-      enabled: false
+#server:
+#  error:
+#    whitelabel:
+#      enabled: false

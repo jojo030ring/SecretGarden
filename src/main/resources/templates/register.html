@@ -66,9 +66,10 @@
                 data:JSON.stringify(sendData),
                 method:"POST",
                 async: true,
-                timeout: 5000,
+                timeout: 50000,
                 dataType: "json",
-                contentType: "application/json; charset=utf-8",
+                headers : {"Content-Type" : "application/json;charset=utf-8"},
+                contentType: "application/json;charset=utf-8",
 
                 success: function(response) {
                     alert("성공!");
