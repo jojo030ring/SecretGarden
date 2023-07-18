@@ -13,12 +13,8 @@ public class UserRepository {
     @PersistenceContext
     EntityManager em;
     @Transactional
-    public void save(UserRegisterRequest uRRequest) {
-        User user = User.builder().id(uRRequest.getId())
-                .name(uRRequest.getName())
-                        .email(uRRequest.getEmail_id()+"@"+uRRequest.getUser_domain())
-                                .password(uRRequest.getPassword())
-                                        .phonenum(uRRequest.getPhonenum()).build();
+    public void save(User user) {
+
         em.persist(user);
     }
     public User findOne(String id) {

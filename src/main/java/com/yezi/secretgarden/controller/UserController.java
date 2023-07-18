@@ -6,6 +6,7 @@ import com.yezi.secretgarden.domain.UserRegisterRequest;
 import com.yezi.secretgarden.exception.InValidRegisterUserException;
 import com.yezi.secretgarden.repository.UserRepository;
 import com.yezi.secretgarden.service.LoggerService;
+import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,24 +27,23 @@ import java.util.Map;
 @RequestMapping("/secretgarden")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final LoggerService loggerService;
     @GetMapping("/register")
     public String register() {
-        return "register.html";
+        return "register";
     }
 
     @PostMapping("/register")
-    public String register( @Valid UserRegisterRequest uRRequest,BindingResult bindingResult, Model m) {
+    public String register( @Valid @RequestBody  UserRegisterRequest uRRequest,BindingResult bindingResult, Model m) {
             if(!validate(bindingResult)) {
-
                 m.addAttribute("result", false);
                 throw new InValidRegisterUserException();
 //                return "redirect:/secretgarden/register";
 
             }else {
-                userRepository.save(uRRequest);
-                return "redirect:/";
+                userService.registerUser(uRRequest);
+                return "redirect:/secretgarden/";
 
             }
         }
