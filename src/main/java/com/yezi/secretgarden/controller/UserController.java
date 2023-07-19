@@ -28,29 +28,36 @@ public class UserController {
         return "register";
     }
 
-    @PostMapping(
-            value = "/register",
-            headers="Accept=application/json")
-    @ResponseBody
-    public String register( @Valid @RequestBody  UserRegisterRequest uRRequest,BindingResult bindingResult, Model m) {
-//        User user =
 
-        Gson gson = new Gson();
-        HashMap<String, String> map = new HashMap<>();
-            if(!validate(bindingResult)) {
+//    @ResponseBody
+//    public String register( @Valid @RequestBody  UserRegisterRequest uRRequest,BindingResult bindingResult, Model m) {
+//
+//        Gson gson = new Gson();
+//        HashMap<String, String> map = new HashMap<>();
+//            if(!validate(bindingResult)) {
 //                m.addAttribute("result", false);
-                throw new InValidRegisterUserException();
-//                map.put("result","false");
+//                throw new InValidRegisterUserException();
+//               //map.put("result","false");
 //                return gson.toJson(map);
+//
+//            }else {
+//                System.out.println(uRRequest);
+//                userService.registerUser(uRRequest);
+//                map.put("result","true");
+//                return gson.toJson(map);
+//
+//            }
+//        }
+    @PostMapping(
+        value = "/register"
+        , headers="Accept=application/json")
+    @ResponseBody
+    public String register(@Valid @RequestBody UserRegisterRequest uRRequest, Model m) {
+        Gson gson = new Gson();
+        userService.registerUser(uRRequest);
+        return gson.toJson(new HashMap<>().put("result","false"));
 
-            }else {
-                System.out.println(uRRequest);
-                userService.registerUser(uRRequest);
-                map.put("result","true");
-                return gson.toJson(map);
-
-            }
-        }
+    }
 
 
 

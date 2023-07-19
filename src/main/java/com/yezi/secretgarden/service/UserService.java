@@ -2,10 +2,13 @@ package com.yezi.secretgarden.service;
 
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.UserRegisterRequest;
+import com.yezi.secretgarden.exception.InValidRegisterUserException;
 import com.yezi.secretgarden.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.Valid;
 
 @Service
 @Transactional(readOnly = true)
@@ -13,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     @Transactional
-    public void registerUser(UserRegisterRequest userRegisterRequest) {
+    public void registerUser(UserRegisterRequest userRegisterRequest) throws InValidRegisterUserException {
         User user = User.builder().id(userRegisterRequest.getId())
                 .name(userRegisterRequest.getName())
                 .email(userRegisterRequest.getEmail_id()+"@"+userRegisterRequest.getUser_domain())
