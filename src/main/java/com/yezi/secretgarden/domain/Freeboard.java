@@ -1,6 +1,8 @@
 package com.yezi.secretgarden.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.util.List;
 @Table(name="freeboard")
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Freeboard {
     @Id
     @GeneratedValue
@@ -29,6 +32,13 @@ public class Freeboard {
         user.getBoardList().add(this);
     }
 
+    /**
+     * 생성 메서드
+     * @param user
+     * @param title
+     * @param content
+     * @return
+     */
     public static Freeboard createFreeBoard(User user, String title, String content) {
         Freeboard freeboard = new Freeboard();
         freeboard.setUser(user);

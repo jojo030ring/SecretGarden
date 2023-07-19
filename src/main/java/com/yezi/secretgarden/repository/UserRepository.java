@@ -12,13 +12,14 @@ import javax.persistence.PersistenceContext;
 public class UserRepository {
     @PersistenceContext
     EntityManager em;
-    @Transactional
-    public void save(User user) {
 
+    public void save(User user) {
         em.persist(user);
     }
     public User findOne(String id) {
         return em.find(User.class, id);
 
     }
+
+
 }

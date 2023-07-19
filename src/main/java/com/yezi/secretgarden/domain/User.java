@@ -1,9 +1,6 @@
 package com.yezi.secretgarden.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 프록시 객체를 위함
 public class User {
     @Id
     @Column(name="user_id")
@@ -32,7 +30,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     List<Diary> diaryList = new ArrayList<>();
 
-    // 생성 메서드 //
+    // 생성 메서드 - 빌더패턴//
     @Builder
     public User (String id, String password, String name, String email, String phonenum) {
         this.id=id;
@@ -45,9 +43,6 @@ public class User {
     }
 
 
-    public User() {
-
-    }
 
 
 }

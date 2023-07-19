@@ -1,6 +1,8 @@
 package com.yezi.secretgarden.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.List;
 @Table(name="diary")
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Diary {
     @Id
     @GeneratedValue
@@ -30,6 +33,13 @@ public class Diary {
         user.getDiaryList().add(this);
     }
 
+    /**
+     * 생성 메서드
+     * @param user
+     * @param title
+     * @param content
+     * @return
+     */
     public static Diary createDiary(User user, String title, String content) {
         Diary diary = new Diary();
         diary.setUser(user);
