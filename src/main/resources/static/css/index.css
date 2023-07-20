@@ -3,7 +3,7 @@
 }
 
 .jumbotron {
-    background-image : url('../img/secret_garden.jpg');
+    background-image : url('/img/secret_garden.jpg');
     height: 300px;
 
 }

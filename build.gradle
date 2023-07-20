@@ -25,11 +25,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
 	implementation 'com.google.code.gson:gson:2.9.0'
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
+	// 스프링 시큐리티 관련 타임리프 및 기타 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 
 	// spring validation
 	dependencies {

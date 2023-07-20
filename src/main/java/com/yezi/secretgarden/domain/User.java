@@ -19,6 +19,7 @@ public class User {
     private String id;
     private String password;
     private String name;
+    @Column(unique = true)
     private String email;
     private String phonenum;
     private LocalDateTime regDate;

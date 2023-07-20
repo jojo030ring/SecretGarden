@@ -53,7 +53,13 @@ logging:
   level:
     org.hibernate.sql: debug # logger??? debug? ??
 
-#server:
-#  error:
-#    whitelabel:
-#      enabled: false
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+# Jwt Token Provider
+jwt:
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+#HS256 알고리즘을 사용하기 위해 256비트보다 더 커야함.
+#32 글자 이상이면 됨

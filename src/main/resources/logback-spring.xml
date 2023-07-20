@@ -119,14 +119,14 @@
 
 
         <!-- 전역 설정 -->
-    <logger name="com.yezi.secretgarden" level="TRACE">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
+<!--    <logger name="com.yezi.secretgarden" level="TRACE">-->
+<!--        <appender-ref ref="CONSOLE"/>-->
+<!--    </logger>-->
     <!-- 내 프로젝트 패키지와 관련된 로그만 출력하고 싶을 때
      + 기본 로그는 info로 지정하나 해당 프로젝트 패키지명은 debug로 지정-->
         <root level="INFO">
             <!-- 전역 설정이 info로 고정된다 -->
-<!--        <appender-ref ref="CONSOLE"/>-->
+            <appender-ref ref="CONSOLE"/>
             <appender-ref ref="TRACE" />
             <appender-ref ref="INFO" />
             <appender-ref ref="WARN" />
