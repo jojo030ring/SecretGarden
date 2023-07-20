@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `secretgarden`.`freeboard` (
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8;
 
-
+alter table add column auth varchar(20) not null;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

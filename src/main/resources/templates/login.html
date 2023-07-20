@@ -11,7 +11,7 @@
     <!----------- main ------------->
     <main>
         <!--로그인 폼-->
-        <form>
+        <form method="post" action="/secretgarden/login">
             <div class="input-group mx-auto w-25 mt-5 border border-secondary p-4">
                 <h1 class="display-5 mb-3">Login</h1>
                     <div class="mb-3 w-100 form-floating">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="mb-3 col-md-12 form-check">
                         <input type="checkbox" class="form-check-input" name="rememberId" id="rememberId">
-                        <label class="form-check-label" for="exampleCheck1">아이디 기억</label>
+                        <label class="form-check-label" for="rememberId">아이디 기억</label>
                     </div>
                     <div class="mb-3 col-md-12 d-flex flex-column">
                         <button type="submit" class="btn btn-outline-success px-5">로그인</button>
@@ -33,7 +33,7 @@
                         <ul class="list-group list-group-horizontal-md">
                             <li class="list-group-item border-0 border-end"><a href="./find_id.html">아이디 찾기</a></li>
                             <li class="list-group-item border-0 border-end"><a href="./find_pw.html">비밀번호 찾기</a></li>
-                            <li class="list-group-item border-0"><a href="./register.html">회원가입</a></li>
+                            <li class="list-group-item border-0"><a href="/secretgarden/register">회원가입</a></li>
                         </ul>
                     </div>      
 

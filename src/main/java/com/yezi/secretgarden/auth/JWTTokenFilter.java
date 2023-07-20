@@ -1,4 +1,4 @@
-package com.yezi.secretgarden.filter;
+package com.yezi.secretgarden.auth;
 
 import com.yezi.secretgarden.auth.JWTTokenProvider;
 import lombok.extern.slf4j.Slf4j;

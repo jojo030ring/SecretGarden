@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,8 +35,9 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handle(BindException e) {
         BindingResult b = e.getBindingResult();
-
-        loggerService.errorLoggerTest(b.getAllErrors().get(1).toString());
+        for(ObjectError error : b.getAllErrors()) {
+            loggerService.errorLoggerTest(error.toString());
+        }
         loggerService.errorLoggerTest(e.getMessage());
         // redirect
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

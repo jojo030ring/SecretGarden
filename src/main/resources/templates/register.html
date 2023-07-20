@@ -4,7 +4,8 @@
     <div th:replace="/fragments/head.html :: fragment-head"></div>
 
     <!--개인적으로 생성한 css-->
-    <script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
         $(document).ready(function() {
             let selectedValue = $("#domain option:selected").val();
             let userDomain = $("#user_domain")
@@ -28,7 +29,6 @@
 
             $("#registerBtn").click(function(event) {
                 submitData();
-                alert(1);
             });
 
 
@@ -44,22 +44,27 @@
             $.ajax({
                 url:"/secretgarden/register",
                 method:"post",
-                dataType:"json",
+                dataType:"text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
+                                  // text로 받는게 맞다
                 contentType:"application/json; charset=utf-8",
                 data:JSON.stringify(object),
-                success: function(json) {
-                    alert("success!");
-                    location.href="/";
+                success: function(result) {
+                    let obj = JSON.parse(result); // hashmap 형태로 보내주었기 때문에 Json.parse로 json 객체로 만들어줌
+                    let url = obj.url;
+                    let msg = obj.msg;
+                    alert(msg);
+                    location.href=url;
                 },
                 error: function(request,status,error) {
-                    location.href="/secretgarden/register"
+                    alert("다시 입력해주세요!");
+
                 }
             });
 
 
 
         }
-
+        /*]]>*/
     </script>
 
     <title>Document</title>
@@ -82,7 +87,7 @@
                         <label for="password">패스워드</label>
                     </div>
                     <div class="mb-3 col-md-12 form-floating">
-                        <input type="password" class="form-control" name="password" id="password_repeat" placeholder="input pw">
+                        <input type="password" class="form-control" name="password_repeat" id="password_repeat" placeholder="input pw">
                         <label for="password">패스워드 재입력</label>
                     </div>
                     <div class="hint"></div>

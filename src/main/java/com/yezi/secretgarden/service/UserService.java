@@ -7,6 +7,7 @@ import com.yezi.secretgarden.exception.InValidRegisterUserException;
 import com.yezi.secretgarden.repository.ModifyRegisterRequest;
 import com.yezi.secretgarden.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
+    private final BCryptPasswordEncoder pwdEncoder;
     /**
      * 회원가입시 사용하는 메서드
      * @param userRegisterRequest : 사용자로부터 받은 폼 데이터를 따로 클래스로 만들어주었음
@@ -25,11 +26,14 @@ public class UserService {
      */
     @Transactional
     public void registerUser(UserRegisterRequest userRegisterRequest) {
+        String rawPassword = userRegisterRequest.getPassword();
+        String encPassword = pwdEncoder.encode(rawPassword); // 패스워드 암호화
         User user = User.builder().id(userRegisterRequest.getId())
                 .name(userRegisterRequest.getName())
                 .email(userRegisterRequest.getEmail_id()+"@"+userRegisterRequest.getUser_domain())
-                .password(userRegisterRequest.getPassword())
+                .password(encPassword)
                 .phonenum(userRegisterRequest.getPhonenum()).build();
+        user.setRole("ROLE_USER");
         userRepository.save(user);
 
     }

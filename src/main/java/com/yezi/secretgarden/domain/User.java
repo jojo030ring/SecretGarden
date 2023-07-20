@@ -26,8 +26,8 @@ public class User {
     private LocalDateTime regDate;
 
     // 인증을 위한 컬럼
-    @Embedded
-    private List<GrantedAuthority> userAuth; //
+    private String role;
+
 
     // 조인되는 엔티티 클래스의 필드명
     @OneToMany(mappedBy = "user")
