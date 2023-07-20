@@ -1,6 +1,7 @@
 package com.yezi.secretgarden.domain;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,6 +24,10 @@ public class User {
     private String email;
     private String phonenum;
     private LocalDateTime regDate;
+
+    // 인증을 위한 컬럼
+    @Embedded
+    private List<GrantedAuthority> userAuth; //
 
     // 조인되는 엔티티 클래스의 필드명
     @OneToMany(mappedBy = "user")
