@@ -3,15 +3,12 @@ package com.yezi.secretgarden.service;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.UserRegisterRequest;
 import com.yezi.secretgarden.exception.InValidPwException;
-import com.yezi.secretgarden.exception.InValidRegisterUserException;
 import com.yezi.secretgarden.repository.ModifyRegisterRequest;
 import com.yezi.secretgarden.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.Valid;
 
 @Service
 @Transactional(readOnly = true)

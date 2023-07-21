@@ -1,25 +1,18 @@
 package com.yezi.secretgarden.controller;
 
-import com.google.gson.Gson;
-import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.UserRegisterRequest;
-import com.yezi.secretgarden.exception.InValidRegisterUserException;
 import com.yezi.secretgarden.service.LoggerService;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 

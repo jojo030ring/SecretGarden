@@ -1,9 +1,7 @@
 package com.yezi.secretgarden.repository;
 
 import com.yezi.secretgarden.domain.User;
-import com.yezi.secretgarden.domain.UserRegisterRequest;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

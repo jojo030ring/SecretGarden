@@ -96,34 +96,24 @@ package com.yezi.secretgarden.jwt;
 //
 //}
 
-import java.io.IOException;
-import java.util.Date;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yezi.secretgarden.auth.PrincipalDetails;
 import com.yezi.secretgarden.domain.User;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
+import com.yezi.secretgarden.domain.UserRequestDto;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class jwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 
     private final AuthenticationManager authenticationManager;
 
@@ -137,20 +127,21 @@ public class jwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // request에 있는 username과 password를 파싱해서 자바 Object로 받기
         ObjectMapper om = new ObjectMapper();
-        User user = null;
+        UserRequestDto userRequestDto = null;
         try {
-            user = om.readValue(request.getInputStream(), User.class);
+            userRequestDto = om.readValue(request.getInputStream(), UserRequestDto.class);
+            System.out.println(userRequestDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("JwtAuthenticationFilter : "+user);
+        System.out.println("JwtAuthenticationFilter : "+userRequestDto);
 
         // 유저네임패스워드 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        user.getPassword());
+                        userRequestDto.getUsername(),
+                        userRequestDto.getPassword());
 
         System.out.println("JwtAuthenticationFilter : 토큰생성완료");
 
