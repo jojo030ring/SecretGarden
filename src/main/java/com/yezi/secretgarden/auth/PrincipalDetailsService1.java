@@ -3,7 +3,6 @@ package com.yezi.secretgarden.auth;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class PrincipalDetailsService implements UserDetailsService {
+public class PrincipalDetailsService1 implements UserDetailsService {
     /**
      * 여기서 중요한 점. form 태그의 name을 username이라고 지정하지 않으면 값이 들어오지 않는다...
      * 하지만 나는 id로 저장해놨는데.. >> config 파일을 손보자     */
@@ -30,7 +29,8 @@ public class PrincipalDetailsService implements UserDetailsService {
         User userEntity = userService.findUser(id);
         System.out.println(userEntity);
         if(userEntity!=null) {
-            return new PrincipalDetails(userEntity);
+            return
+                    new PrincipalDetails1(userEntity);
         }
         return null;
     }

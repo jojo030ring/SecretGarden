@@ -28,12 +28,11 @@ public class UserService {
     public void registerUser(UserRegisterRequest userRegisterRequest) {
         String rawPassword = userRegisterRequest.getPassword();
         String encPassword = pwdEncoder.encode(rawPassword); // 패스워드 암호화
-        User user = User.builder().id(userRegisterRequest.getId())
+        User user = User.builder().username(userRegisterRequest.getId())
                 .name(userRegisterRequest.getName())
                 .email(userRegisterRequest.getEmail_id()+"@"+userRegisterRequest.getUser_domain())
                 .password(encPassword)
                 .phonenum(userRegisterRequest.getPhonenum()).build();
-        user.setRole("ROLE_USER");
         userRepository.save(user);
 
     }
