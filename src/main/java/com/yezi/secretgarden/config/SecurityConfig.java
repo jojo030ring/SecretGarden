@@ -45,19 +45,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // http.formLogin().loginPage("/secretgarden/login").loginProcessingUrl("/secretgarden/login").disable(); >> form login을 사용하지 않기 때문에 새로운 필터를 만들어야 함
 
         System.out.println(this.authenticationManager().toString());
-///////// jwt 안 쓸 때의 스프링 시큐리티 ///////
-////        http.authorizeRequests().antMatchers("/secretgarden/").authenticated()
-//////                .antMatchers("/secretgarden/manager/**").hasAuthority("ROLE_MANAGER")
-//////                .antMatchers("/secretgarden/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
-//////                .anyRequest().permitAll()
-////                .antMatchers("/secretgarden/board/**","/secretgarden/diary/**").authenticated()
-////                .and()
-////                .formLogin()
-////                .loginPage("/secretgarden/login") // 권한이 없는 경우 로그인 페이지로 자동으로 이동시킴
-////                .usernameParameter("id") // PrincipalDetailsService에서 load... 함수에 들어가는 username 파라미터의 이름을 id로 정해줌
-////                .loginProcessingUrl("/secretgarden/login") // login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해줌 >> controller에 /login 적어주지 않아도 됨
-////                .defaultSuccessUrl("/secretgarden/") // 로그인에 성공하면 /로 이동
-////                .failureUrl("/secretgarden/register");
+/////// jwt 안 쓸 때의 스프링 시큐리티 ///////
+//        http.authorizeRequests().antMatchers("/secretgarden/").authenticated()
+////                .antMatchers("/secretgarden/manager/**").hasAuthority("ROLE_MANAGER")
+////                .antMatchers("/secretgarden/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+////                .anyRequest().permitAll()
+//                .antMatchers("/secretgarden/board/**","/secretgarden/diary/**").authenticated()
+//                .and()
+//                .formLogin()
+//                .loginPage("/secretgarden/login") // 권한이 없는 경우 로그인 페이지로 자동으로 이동시킴
+//                .usernameParameter("id") // PrincipalDetailsService에서 load... 함수에 들어가는 username 파라미터의 이름을 id로 정해줌
+//                .loginProcessingUrl("/secretgarden/login") // login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해줌 >> controller에 /login 적어주지 않아도 됨
+//                .defaultSuccessUrl("/secretgarden/") // 로그인에 성공하면 /로 이동
+//                .failureUrl("/secretgarden/register");
 
     }
     // 패스워드 암호화를 위한

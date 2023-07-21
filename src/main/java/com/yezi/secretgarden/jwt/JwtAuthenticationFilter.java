@@ -96,9 +96,13 @@ package com.yezi.secretgarden.jwt;
 //
 //}
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.yezi.secretgarden.auth.PrincipalDetails;
 import com.yezi.secretgarden.domain.User;
 
@@ -111,6 +115,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
+import java.util.Date;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
@@ -126,42 +133,78 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("JwtAuthenticationFilter : 진입");
 
         // request에 있는 username과 password를 파싱해서 자바 Object로 받기
-        ObjectMapper om = new ObjectMapper();
+        ObjectMapper om = new ObjectMapper(); // json 데이터를 파싱해줌
         UserRequestDto userRequestDto = null;
         try {
+            // stream안에 username이랑 password가 다 담겨있음
             userRequestDto = om.readValue(request.getInputStream(), UserRequestDto.class);
             System.out.println(userRequestDto);
+            System.out.println("JwtAuthenticationFilter : "+userRequestDto);
+
+            // 유저네임 패스워드 토큰 생성
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userRequestDto.getUsername(),
+                            userRequestDto.getPassword());
+
+            System.out.println("JwtAuthenticationFilter : 토큰생성완료");
+            // PrincipalDetailsService의 loadUserByUsername() 함수가 실행됨
+
+            // authenticate() 함수가 호출 되면 인증 프로바이더가 유저 디테일 서비스의
+            // loadUserByUsername(토큰의 첫번째 파라메터) 를 호출하고
+            // UserDetails를 리턴받아서 토큰의 두번째 파라메터(credential)과
+            // UserDetails(DB값)의 getPassword()함수로 비교해서 동일하면
+            // Authentication 객체를 만들어서 필터체인으로 리턴해준다.
+
+            // Tip: 인증 프로바이더의 디폴트 서비스는 UserDetailsService 타입
+            // Tip: 인증 프로바이더의 디폴트 암호화 방식은 BCryptPasswordEncoder
+            // 결론은 인증 프로바이더에게 알려줄 필요가 없음.
+
+
+            // PrincipalDetailsService의 loadUserByUsername()이 실행된 후 정상이면 authentication이 리턴됨
+            // DB에 있는 username과 password가 일치한다
+            Authentication authentication =
+                    authenticationManager.authenticate(authenticationToken);
+            PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
+            System.out.println("Authentication : "+principalDetailis.getUser().getUsername()); // 로그인이 정상적으로 되었다
+            // authentication 객체가 session 영역에 저장됨 > 그 방법이 return 하는 것
+            // 리턴의 이유는 권한 관리를 security 대신 해주므로 편하라고 하는 것
+            // 굳이 JWT를 사용하면서 세션을 만들 이유는 없지만 권한처리때문에 세션에 넣어준다.
+
+
+            return authentication;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("JwtAuthenticationFilter : "+userRequestDto);
+        return null;
 
-        // 유저네임패스워드 토큰 생성
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                        userRequestDto.getUsername(),
-                        userRequestDto.getPassword());
 
-        System.out.println("JwtAuthenticationFilter : 토큰생성완료");
-
-        // authenticate() 함수가 호출 되면 인증 프로바이더가 유저 디테일 서비스의
-        // loadUserByUsername(토큰의 첫번째 파라메터) 를 호출하고
-        // UserDetails를 리턴받아서 토큰의 두번째 파라메터(credential)과
-        // UserDetails(DB값)의 getPassword()함수로 비교해서 동일하면
-        // Authentication 객체를 만들어서 필터체인으로 리턴해준다.
-
-        // Tip: 인증 프로바이더의 디폴트 서비스는 UserDetailsService 타입
-        // Tip: 인증 프로바이더의 디폴트 암호화 방식은 BCryptPasswordEncoder
-        // 결론은 인증 프로바이더에게 알려줄 필요가 없음.
-        Authentication authentication =
-                authenticationManager.authenticate(authenticationToken);
-
-        PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
-        System.out.println("Authentication : "+principalDetailis.getUser().getUsername());
-        return authentication;
     }
 
+    // attemptAuthentication 실행 후 인증이 정상적으로 되었으면 successfulAuthentication 실행
+    // JWT 토큰을 만들어서 request 요청한 사용자에게 JWT 토큰을 response해주면 됨
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        PrincipalDetails principalDetailis = (PrincipalDetails) authResult.getPrincipal();
+        String jwtToken = JWT.create() // com.auth... 걸어놔서 사용 가능
+                .withSubject("secret garden token")
+                .withExpiresAt(new Date(System.currentTimeMillis()+1000*60*30))
+                .withClaim("id",principalDetailis.getUser().getUsername())
+                .withClaim("name",principalDetailis.getUser().getName())
+                .sign(Algorithm.HMAC512("secretgarden")).toString();
+        
+        response.addHeader("Authrorization", "Bearer "+jwtToken); //Bearerd에서 한 칸 띄워야 한다
 
-
+        System.out.println("successful Authentication : 실행 완료!");
+        super.successfulAuthentication(request, response, chain, authResult);
+    }
 }
+
+/*
+    JWT 토큰을 생성
+    클라이언트쪽으로 JWT 토큰을 응답
+    요청할 때마다 JWT 토큰을 가지고 요청
+    서버는 JWT 토큰이 유효한지를 판단 >> 필터를 만들어야 함
+
+ */
