@@ -46,10 +46,12 @@ public class UserController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String login() {
-        return "redirect:/";
-    }
+
+
+
+
+
+
     @Secured("ROLE_ADMIN")
     @GetMapping("/info")
     public @ResponseBody String info() {

@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -42,4 +45,17 @@ public class ControllerAdvice {
         // redirect
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+//    @ExceptionHandler(UsernameNotFoundException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseEntity<String> authenticationFail(BindException e) {
+//        loggerService.errorLoggerTest("exception !!");
+//
+//        BindingResult b = e.getBindingResult();
+//        for(ObjectError error : b.getAllErrors()) {
+//            loggerService.errorLoggerTest(error.toString());
+//        }
+//        loggerService.errorLoggerTest(e.getMessage());
+//        // redirect
+//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//    }
 }

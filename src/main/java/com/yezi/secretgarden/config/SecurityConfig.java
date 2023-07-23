@@ -1,7 +1,11 @@
 package com.yezi.secretgarden.config;
 
 import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
+import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
+import com.yezi.secretgarden.repository.UserRepository;
+import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -10,25 +14,30 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터 체인에 등록이 됨
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured annotation 활성화 / pre + postAuthorize 어노테이션 활성화
-@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final CorsConfig corsConfig;
-
+    @Autowired
+    private CorsConfig corsConfig;
+    @Autowired
+    private UserService userService;
     protected void configure(HttpSecurity http) throws Exception {
 
         http
+
                 .addFilter(corsConfig.corsFilter())
                 .csrf().disable()
                 // 세션 사용하지 않음 > jwt 사용하지 않을 경우엔 빼주어야 함
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+
                 .formLogin().disable()
                 .httpBasic().disable()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager())) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
+
 
 
                 /*
@@ -39,12 +48,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  *   3번 설명 보자...
                  */
                 .authorizeRequests()
-                .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/", "/secretgarden/")
+                .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden/")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-                .anyRequest().permitAll();
-        // http.formLogin().loginPage("/secretgarden/login").loginProcessingUrl("/secretgarden/login").disable(); >> form login을 사용하지 않기 때문에 새로운 필터를 만들어야 함
+                .anyRequest().permitAll()
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(),userService), BasicAuthenticationFilter.class);    // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
 
-        System.out.println(this.authenticationManager().toString());
+        // http.formLogin().loginPage("/secretgarden/login").loginProcessingUrl("/secretgarden/login").disable(); >> form login을 사용하지 않기 때문에 새로운 필터를 만들어야 함
 /////// jwt 안 쓸 때의 스프링 시큐리티 ///////
 //        http.authorizeRequests().antMatchers("/secretgarden/").authenticated()
 ////                .antMatchers("/secretgarden/manager/**").hasAuthority("ROLE_MANAGER")
@@ -60,9 +71,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .failureUrl("/secretgarden/register");
 
     }
-    // 패스워드 암호화를 위한
-    @Bean // 해당 메서드의 리턴되는 메서드를 bean으로 등록
-    public BCryptPasswordEncoder encodePwd() {
-        return new BCryptPasswordEncoder();
-    }
+
 }

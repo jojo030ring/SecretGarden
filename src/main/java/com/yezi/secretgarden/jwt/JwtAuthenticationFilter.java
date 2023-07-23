@@ -98,34 +98,57 @@ package com.yezi.secretgarden.jwt;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.auth.PrincipalDetails;
 import com.yezi.secretgarden.domain.User;
 
 import com.yezi.secretgarden.domain.UserRequestDto;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
 import java.util.Date;
+public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+    private ObjectMapper objectMapper = new ObjectMapper(); // json 데이터를 파싱해줌
+    LoginFailHandler loginFailHandler = new LoginFailHandler();
 
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
+    private static final AntPathRequestMatcher DEFAULT_PATH_REQUEST_MATCHER
+            = new AntPathRequestMatcher("/secretgarden/login","POST");
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+       super(DEFAULT_PATH_REQUEST_MATCHER,authenticationManager);
 
-    private final AuthenticationManager authenticationManager;
+    }
+
+    /**
+     * UsernamePasswordAuthenticationFilter : 해당 필터를 거치고 다음 필터로 가지 않는다.
+     * 인증 성공 여부에 따른 메서드 successAuthentication, unSuccessfulAuthentication 구현 필수
+     * 해당 필터는 login으로 접근할 때만 동작하므로, 해당 url을 변경해주어야 한다.
+     * @param request
+     * @param response
+     * @return
+     * @throws AuthenticationException
+     */
+
+
 
     // Authentication 객체 만들어서 리턴 => 의존 : AuthenticationManager
     // 인증 요청시에 실행되는 함수 => /login
+
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
@@ -133,11 +156,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("JwtAuthenticationFilter : 진입");
 
         // request에 있는 username과 password를 파싱해서 자바 Object로 받기
-        ObjectMapper om = new ObjectMapper(); // json 데이터를 파싱해줌
+        // json 데이터를 파싱해줌
         UserRequestDto userRequestDto = null;
         try {
             // stream안에 username이랑 password가 다 담겨있음
-            userRequestDto = om.readValue(request.getInputStream(), UserRequestDto.class);
+            userRequestDto = objectMapper.readValue(request.getInputStream(), UserRequestDto.class);
             System.out.println(userRequestDto);
             System.out.println("JwtAuthenticationFilter : "+userRequestDto);
 
@@ -164,17 +187,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // PrincipalDetailsService의 loadUserByUsername()이 실행된 후 정상이면 authentication이 리턴됨
             // DB에 있는 username과 password가 일치한다
             Authentication authentication =
-                    authenticationManager.authenticate(authenticationToken);
-            PrincipalDetails principalDetailis = (PrincipalDetails) authentication.getPrincipal();
-            System.out.println("Authentication : "+principalDetailis.getUser().getUsername()); // 로그인이 정상적으로 되었다
+                    getAuthenticationManager().authenticate(authenticationToken);
+            //System.out.println("Authentication : "+principalDetailis.getUser().getUsername()); // 로그인이 정상적으로 되었다
             // authentication 객체가 session 영역에 저장됨 > 그 방법이 return 하는 것
             // 리턴의 이유는 권한 관리를 security 대신 해주므로 편하라고 하는 것
             // 굳이 JWT를 사용하면서 세션을 만들 이유는 없지만 권한처리때문에 세션에 넣어준다.
 
 
             return authentication;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
         return null;
@@ -186,18 +208,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // JWT 토큰을 만들어서 request 요청한 사용자에게 JWT 토큰을 response해주면 됨
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        PrincipalDetails principalDetailis = (PrincipalDetails) authResult.getPrincipal();
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
         String jwtToken = JWT.create() // com.auth... 걸어놔서 사용 가능
                 .withSubject("secret garden token")
                 .withExpiresAt(new Date(System.currentTimeMillis()+1000*60*30))
-                .withClaim("id",principalDetailis.getUser().getUsername())
-                .withClaim("name",principalDetailis.getUser().getName())
+                .withClaim("id",principalDetails.getUser().getUsername())
+                .withClaim("name",principalDetails.getUser().getName())
                 .sign(Algorithm.HMAC512("secretgarden")).toString();
-        
-        response.addHeader("Authrorization", "Bearer "+jwtToken); //Bearerd에서 한 칸 띄워야 한다
+        System.out.println("generated jwt token : "+jwtToken);
 
+        Cookie cookie = new Cookie("token", jwtToken);
+        cookie.setHttpOnly(true);
+
+        response.addCookie(cookie);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpStatus.OK.value());
         System.out.println("successful Authentication : 실행 완료!");
-        super.successfulAuthentication(request, response, chain, authResult);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        loginFailHandler.onAuthenticationFailure(request, response, failed);
+
     }
 }
 

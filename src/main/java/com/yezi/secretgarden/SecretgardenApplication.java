@@ -13,5 +13,9 @@ public class SecretgardenApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SecretgardenApplication.class, args);
 	}
-
+	// 패스워드 암호화를 위한
+	@Bean // 해당 메서드의 리턴되는 메서드를 bean으로 등록
+	public BCryptPasswordEncoder encodePwd() {
+		return new BCryptPasswordEncoder();
+	}
 }
