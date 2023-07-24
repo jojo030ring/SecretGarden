@@ -1,19 +1,20 @@
 package com.yezi.secretgarden.config;
 
+import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
 import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
-import com.yezi.secretgarden.repository.UserRepository;
+import com.yezi.secretgarden.jwt.TokenProvider;
 import com.yezi.secretgarden.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -25,9 +26,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private CorsConfig corsConfig;
     @Autowired
     private UserService userService;
+    @Autowired
+    LoginFailHandler loginFailHandler;
     protected void configure(HttpSecurity http) throws Exception {
 
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager());
+        jwtAuthenticationFilter.setFilterProcessesUrl("/secretgarden/login");
+        jwtAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailHandler());
         http
+
 
                 .addFilter(corsConfig.corsFilter())
                 .csrf().disable()
@@ -47,13 +54,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 /*
                  *   3번 설명 보자...
                  */
+
                 .authorizeRequests()
+                .antMatchers("/secretgarden/login", "/secretgarden/register").permitAll()
                 .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden/")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-                .anyRequest().permitAll()
+
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
-                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(),userService), BasicAuthenticationFilter.class);    // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
+                .addFilterAt(new JwtAuthorizationFilter(authenticationManager(),userService), BasicAuthenticationFilter.class);
+
 
         // http.formLogin().loginPage("/secretgarden/login").loginProcessingUrl("/secretgarden/login").disable(); >> form login을 사용하지 않기 때문에 새로운 필터를 만들어야 함
 /////// jwt 안 쓸 때의 스프링 시큐리티 ///////
@@ -70,6 +80,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .defaultSuccessUrl("/secretgarden/") // 로그인에 성공하면 /로 이동
 //                .failureUrl("/secretgarden/register");
 
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/templates/**", "/static/**", "secretgarden/register");
     }
 
 }

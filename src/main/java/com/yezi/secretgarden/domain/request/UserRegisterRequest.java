@@ -1,4 +1,4 @@
-package com.yezi.secretgarden.domain;
+package com.yezi.secretgarden.domain.request;
 
 import lombok.Getter;
 import lombok.Setter;

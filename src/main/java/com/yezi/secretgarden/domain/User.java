@@ -3,7 +3,6 @@ package com.yezi.secretgarden.domain;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,7 +35,7 @@ public class User {
 
     // 조인되는 엔티티 클래스의 필드명
     @OneToMany(mappedBy = "user")
-    List<Freeboard> boardList = new ArrayList<>();
+    List<Board> boardList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     List<Diary> diaryList = new ArrayList<>();

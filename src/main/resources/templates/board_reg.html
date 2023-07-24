@@ -2,22 +2,46 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="/fragments/head.html :: fragment-head"></div>
-
-    <script>
-        let oEditors =[];
-        smartEditor = function() {
-            console.log("naver smarteditor");
-            nhn.husky.EZCreator.createInIFrame({
-                oAppRef : oEditors,
-                elPlaceHolder : "boardTxt", // id값
-                sSkinURI :  "/smarteditor2-2.8.2.3/SmartEditor2Skin.html",
-                fCreator : "createSEditor2"
-            });
-        };
+    <script th:inline="javascript">
 
         $(document).ready(function() {
-            smartEditor();
+            $("#postBtn").click(function() {
+                submitData();
+            });
+            $("#modBtn").click(function() {
+
+            });
+            $("#delBtn").click(function() {
+
+            });
         });
+
+        function submitData() {
+            let form = $("#boardForm").serializeArray(); // json 데이터를 위한
+            let object = {};
+            for (let i = 0; i < form.length; i++) {
+                object[form[i]['name']] = form[i]['value'];
+            }
+            object['id'] = '${id}';
+            // alert(JSON.stringify(object)); 잘 나옴
+
+            $.ajax({
+                url: "/secretgarden/post",
+                method: "post",
+                dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
+                // text로 받는게 맞다
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(object),
+                success: function (result) {
+                    alert(result.msg);
+                    location.href = result.url;
+                },
+                error: function (request, status, error) {
+                    alert("게시글 등록에 실패했습니다. 다시 시도해주세요.");
+
+                }
+            });
+        }
 
     </script>
 
@@ -27,19 +51,46 @@
     <header th:replace="/fragments/header.html :: fragment-header">
     </header>
 
+            <!-- 타임리프 변수선언 -->
+
+
+
+            </div>
             <!------------------ main ------------------->
             <main>
-                <!--editor를 넣을 위치에textarea 넣어주기 > name, id 설정해야함. rows는 화면에 보이는 라인수 조절 가능-->
-                <form action="">
-                    <div class="container">
-                        <div id="smarteditor" class="mx-auto w-75 mb-3">
-                            <textarea name="boardTxt" id="boardTxt" style="width:766px;margin:auto" cols="30" rows="30" placeholder="내용을 입력해주세요"></textarea>
-                        </div>
-                        <div class="mb-3 col-md-7 d-flex flex-column mx-auto">
-                            <button type="submit" class="btn btn-outline-success px-3">게시글 등록</button>
+                <div class="col-md-8 mx-auto">
+                    <div class="d-flex mb-3 border-bottom">
+                        <h5 class="my-3 pb-2">게시글 작성</h5>
+                        <div class="my-2 ms-auto">
+                            <button type="button" id="modBtn" class="btn btn-primary">수정하기</button>
+                            <button type="button" id="delBtn" class="btn btn-primary">삭제하기</button>
                         </div>
                     </div>
-                </form>
+
+
+                    <form id="boardForm">
+
+                        <div class="mb-3">
+                            <label for ="id">작성자</label>
+                            <div th:text="${id}" name="id" th:value="${id}" id="id" class="mb-3"></div>
+                            <label for="title" class="form-label">제목</label>
+                            <input type="text" name="title" id="title" class="form-control"/>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="form-label">내용</label>
+                            <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+
+                        </div>
+                        <button type="button" id="postBtn" class="btn btn-primary my-2">저장하기</button>
+
+
+
+                    </form>
+
+
+
+                </div>
 
             </main>
 

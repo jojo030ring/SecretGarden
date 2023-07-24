@@ -7,14 +7,13 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name="freeboard")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Freeboard {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="freeboard_id")
@@ -39,8 +38,8 @@ public class Freeboard {
      * @param content
      * @return
      */
-    public static Freeboard createFreeBoard(User user, String title, String content) {
-        Freeboard freeboard = new Freeboard();
+    public static Board createFreeBoard(User user, String title, String content) {
+        Board freeboard = new Board();
         freeboard.setUser(user);
         freeboard.setTitle(title);
         freeboard.setContent(content);

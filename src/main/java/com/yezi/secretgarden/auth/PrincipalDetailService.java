@@ -19,6 +19,7 @@ public class PrincipalDetailService implements UserDetailsService {
         System.out.println("PrincipalDetailsService : 진입");
         User user = userService.findUser(username); // DB에 넣어야 값이 나옵니다
         if(user==null) throw new UsernameNotFoundException("존재하지 않는 사용자입니다.");
-        return new PrincipalDetails(user);
+        PrincipalDetails userDetails = new PrincipalDetails(user);
+        return userDetails;
     }
 }

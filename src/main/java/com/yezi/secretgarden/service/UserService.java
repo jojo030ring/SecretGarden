@@ -1,7 +1,7 @@
 package com.yezi.secretgarden.service;
 
 import com.yezi.secretgarden.domain.User;
-import com.yezi.secretgarden.domain.UserRegisterRequest;
+import com.yezi.secretgarden.domain.request.UserRegisterRequest;
 import com.yezi.secretgarden.exception.InValidPwException;
 import com.yezi.secretgarden.repository.ModifyRegisterRequest;
 import com.yezi.secretgarden.repository.UserRepository;
