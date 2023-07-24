@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -93,16 +95,5 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 
     }
-    public void sendBadRequestResult(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-    public Cookie getCookie(Cookie[] cookies) {
-        for(Cookie cookie : cookies) {
-            if(cookie.getName().equals("token"))
-                return cookie;
-        }
-        return null;
-    }
-
 
 }

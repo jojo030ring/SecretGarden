@@ -1,5 +1,7 @@
 package com.yezi.secretgarden.config;
 
+import com.yezi.secretgarden.auth.AuthenticationEntryPoint;
+import com.yezi.secretgarden.auth.AuthorizationAccessDeniedHandler;
 import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
 import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
@@ -31,8 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager());
-        jwtAuthenticationFilter.setFilterProcessesUrl("/secretgarden/login");
+        //jwtAuthenticationFilter.setFilterProcessesUrl("/secretgarden/login");
         jwtAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailHandler());
+        JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(authenticationManager(),userService);
+
         http
 
 
@@ -57,13 +61,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                 .antMatchers("/secretgarden/login", "/secretgarden/register").permitAll()
-                .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden/")
+                .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden/","/secretgarden/post/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
-                .addFilterAt(new JwtAuthorizationFilter(authenticationManager(),userService), BasicAuthenticationFilter.class);
-
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
+                .addFilterAt(jwtAuthorizationFilter, BasicAuthenticationFilter.class)
+                .exceptionHandling()
+                .accessDeniedHandler(new AuthorizationAccessDeniedHandler())
+                .authenticationEntryPoint(new AuthenticationEntryPoint());
 
         // http.formLogin().loginPage("/secretgarden/login").loginProcessingUrl("/secretgarden/login").disable(); >> form login을 사용하지 않기 때문에 새로운 필터를 만들어야 함
 /////// jwt 안 쓸 때의 스프링 시큐리티 ///////

@@ -5,6 +5,7 @@
     <script th:inline="javascript">
 
         $(document).ready(function() {
+            checkMode();
             $("#postBtn").click(function() {
                 submitData();
             });
@@ -22,7 +23,7 @@
             for (let i = 0; i < form.length; i++) {
                 object[form[i]['name']] = form[i]['value'];
             }
-            object['id'] = '${id}';
+            object['id'] = [[${id}]];
             // alert(JSON.stringify(object)); 잘 나옴
 
             $.ajax({
@@ -33,14 +34,26 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(object),
                 success: function (result) {
-                    alert(result.msg);
-                    location.href = result.url;
+                    let obj = JSON.parse(result);
+                    alert(obj.msg);
+                    location.href = obj.url;
                 },
                 error: function (request, status, error) {
                     alert("게시글 등록에 실패했습니다. 다시 시도해주세요.");
 
                 }
             });
+
+
+        }
+
+        function checkMode() {
+            let mode = [[${MODE}]];
+            switch (mode) {
+                case "READ_MODE" :
+                    $('input,textarea').attr("readonly","true");
+                    break;
+            }
         }
 
     </script>
@@ -74,12 +87,12 @@
                             <label for ="id">작성자</label>
                             <div th:text="${id}" name="id" th:value="${id}" id="id" class="mb-3"></div>
                             <label for="title" class="form-label">제목</label>
-                            <input type="text" name="title" id="title" class="form-control"/>
+                            <input type="text" name="title" id="title" class="form-control" th:value="${board?.title}"/>
 
                         </div>
                         <div class="mb-3">
                             <label for="content" class="form-label">내용</label>
-                            <textarea name="content" id="content" class="form-control" rows="10"></textarea>
+                            <textarea name="content" id="content" class="form-control" rows="10" th:text="${board?.content}"></textarea>
 
                         </div>
                         <button type="button" id="postBtn" class="btn btn-primary my-2">저장하기</button>

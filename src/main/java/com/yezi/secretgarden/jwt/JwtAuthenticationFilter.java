@@ -134,6 +134,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         loginFailHandler.onAuthenticationFailure(request, response, failed);
 
+
     }
 
 

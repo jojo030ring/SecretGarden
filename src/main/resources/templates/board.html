@@ -13,8 +13,9 @@
     <main>
         <!-- 글 목록 -->
 
-        <div class="mb-3 col-md-9 mx-auto table-responsive-md">
-            <a th:href="@{/secretgarden/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
+        <div class="container min-vh-50 py-2 w-75">
+            <div class="table-responsive ">
+                <a th:href="@{/secretgarden/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
 
             <table class="table">
                 <thead>
@@ -27,31 +28,19 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr th:each="board : ${boardList}">
                     <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
+                    <td><a th:href="@{/secretgarden/board/{boardId}(boardId=${board.id})}" th:text="${board.id}"></a></td>
+                    <td></td>
                     <td>@mdo</td>
                     <td>@mdo</td>
                 </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                    <td>@mdo</td>
-                </tr>
+
                 
                 </tbody>
             </table>
 
-
+        </div>
         </div>
         <!-- search -->
         <form>

@@ -1,5 +1,6 @@
 package com.yezi.secretgarden.controller;
 
+import com.yezi.secretgarden.domain.Board;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.request.BoardRegisterRequest;
 import com.yezi.secretgarden.jwt.JwtTokenUtil;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 import java.util.HashMap;
 
 @Controller
@@ -25,8 +27,18 @@ public class BoardController {
     private final UserService userService;
 
     @GetMapping("/board")
-    public String boardList() {
+    public String boardList(Model m) {
+        m.addAttribute("boardList",boardService.getBoardList());
         return "board";
+    }
+    @GetMapping("/board/{id}")
+    public String getBoard(Model m, @PathVariable("id") Long id) {
+        Board board = boardService.getBoard(id);
+        System.out.println(board);
+        m.addAttribute("board",board);
+        m.addAttribute("MODE","READ_MODE");
+        return "board_reg";
+
     }
 
     @GetMapping("/post")
@@ -49,8 +61,9 @@ public class BoardController {
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","게시글 등록을 완료했습니다.");
         map.put("url","/secretgarden/board");
-        return new ResponseEntity<HashMap<String,String>>(HttpStatus.OK);
+        return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
+
 
 
 }

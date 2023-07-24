@@ -11,7 +11,8 @@
                 <ul class="nav justify-content-end bg-white">
 
                     <li class="nav-item">
-                        <span th:if="${T(org.springframework.web.util.WebUtils).getCookie(#request,'token')!=null}" th:text="${@jwtTokenUtil.getLoginId(#request)}+'님, 환영합니다.'"></span>
+                        <span th:if="${T(org.springframework.web.util.WebUtils).getCookie(#request,'token')!=null}"
+                              th:text="${@jwtTokenUtil.getLoginId(#request)}+'님, 환영합니다.'"></span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page"

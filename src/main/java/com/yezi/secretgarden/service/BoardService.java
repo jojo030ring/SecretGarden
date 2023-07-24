@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +33,16 @@ public class BoardService {
         Board targetPost = boardRepository.getBoard(boardId);
         boardRepository.deletePost(targetPost);
     }
+
+    @Transactional
+    public List<Board> getBoardList() {
+        return boardRepository.getBoardList();
+    }
+
+    @Transactional
+    public Board getBoard(Long id) {
+        return boardRepository.getBoard(id);
+    }
+
 
 }
