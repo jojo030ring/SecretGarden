@@ -1,5 +1,6 @@
 package com.yezi.secretgarden.jwt;
 
+import com.yezi.secretgarden.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,12 +26,13 @@ public class JwtTokenUtil {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
-    public String createToken(String loginId) {
+    public String createToken(String loginId, User user) {
         // Claim = Jwt Token에 들어갈 정보
         // Claim에 loginId를 넣어 줌으로써 나중에 loginId를 꺼낼 수 있음
         StringBuilder sb = new StringBuilder();
         Claims claims = Jwts.claims();
         claims.put("id", loginId);
+        claims.put("auth",user.getRoles());
         sb.append("Bearer ");
         sb.append(Jwts.builder()
                 .setClaims(claims)

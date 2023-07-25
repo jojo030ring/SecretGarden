@@ -3,21 +3,55 @@
 <head>
     <div th:replace="/fragments/head.html :: fragment-head"></div>
     <script th:inline="javascript">
+        let mode = [[${MODE}]];
+        let id = [[${id}]];
 
         $(document).ready(function() {
+
             checkMode();
             $("#postBtn").click(function() {
-                submitData();
+                switch (mode) {
+                    case "POST_MODE" :
+                        submitData("/secretgarden/post");
+                        break;
+                    case "MODIFY_MODE":
+                        submitData("/secretgarden/modify/"+id);
+                        break;
+                }
             });
             $("#modBtn").click(function() {
-
+                location.href="/secretgarden/modify/"+id;
             });
             $("#delBtn").click(function() {
-
+                alert(1);
+                deleteData("/secretgarden/delete/"+id);
+            });
+            $("#list").click(function() {
+                location.href="/secretgarden/board";
             });
         });
 
-        function submitData() {
+        function deleteData(url) {
+            $.ajax({
+                url: url,
+                method: "post",
+                dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
+                // text로 받는게 맞다
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    let obj = JSON.parse(result);
+                    alert(obj.msg);
+                    location.href = obj.url;
+                },
+                error: function (request, status, error) {
+                    alert("게시글 삭제에 실패했습니다.");
+                    location.href="/secretgarden/board"
+
+                }
+            });
+
+        }
+        function submitData(url) {
             let form = $("#boardForm").serializeArray(); // json 데이터를 위한
             let object = {};
             for (let i = 0; i < form.length; i++) {
@@ -27,7 +61,7 @@
             // alert(JSON.stringify(object)); 잘 나옴
 
             $.ajax({
-                url: "/secretgarden/post",
+                url: url,
                 method: "post",
                 dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
                 // text로 받는게 맞다
@@ -48,10 +82,17 @@
         }
 
         function checkMode() {
-            let mode = [[${MODE}]];
             switch (mode) {
                 case "READ_MODE" :
                     $('input,textarea').attr("readonly","true");
+                    $('#postBtn').attr("id", "list");
+                    break;
+                case "MODIFY_MODE" :
+                    $('#modBtn').css("display","none");
+                    break;
+                case "POST_MODE" :
+                    $('#modBtn').css("display","none");
+                    $('#delBtn').css("display","none");
                     break;
             }
         }
@@ -75,8 +116,8 @@
                     <div class="d-flex mb-3 border-bottom">
                         <h5 class="my-3 pb-2">게시글 작성</h5>
                         <div class="my-2 ms-auto">
-                            <button type="button" id="modBtn" class="btn btn-primary">수정하기</button>
-                            <button type="button" id="delBtn" class="btn btn-primary">삭제하기</button>
+                            <button type="button" id="modBtn" class="btn btn-secondary">수정하기</button>
+                            <button type="button" id="delBtn" class="btn btn-secondary">삭제하기</button>
                         </div>
                     </div>
 
@@ -85,10 +126,10 @@
 
                         <div class="mb-3">
                             <label for ="id">작성자</label>
-                            <div th:text="${id}" name="id" th:value="${id}" id="id" class="mb-3"></div>
+                            <div th:text="${@jwtTokenUtil.getLoginId(#request)}" name="id" id="id" class="mb-3"></div>
                             <label for="title" class="form-label">제목</label>
                             <input type="text" name="title" id="title" class="form-control" th:value="${board?.title}"/>
-
+                            <input type="hidden" name="userId" th:value="${userId}"/>
                         </div>
                         <div class="mb-3">
                             <label for="content" class="form-label">내용</label>

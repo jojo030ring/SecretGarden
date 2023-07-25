@@ -24,13 +24,22 @@
                 dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
                 // text로 받는게 맞다
                 contentType: "application/json; charset=utf-8",
+                beforeSend :
+                    function(jqXHR) {
+                        jqXHR.setRequestHeader("X-Ajax-Call", "true");
+                    },
                 data: JSON.stringify(object),
-                success: function (result) {
+                success: function (data,textStatus,jqXHR) {
+                    if(data.result =="OK") {
+                        alert("OK");
+                    } else {
+                        alert("fail");
+                    }
                     location.href = "/secretgarden/";
                 },
-                error: function (request, status, error) {
+                error: function (jqXHR, textStatus, error) {
 
-                    alert("로그인에 실패하셨습니다.");
+                    alert("로그인에 실패하셨습니다."+obj.error);
 
                 }
             });

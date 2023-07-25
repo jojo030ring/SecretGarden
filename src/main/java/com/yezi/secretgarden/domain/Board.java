@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,7 +25,8 @@ public class Board {
     private String title;
     private String content;
     private LocalDateTime regdate;
-
+    @ColumnDefault("1")
+    private Long cnt;
     // 연관관계 메서드
     public void setUser(User user) {
         this.user=user;
@@ -46,6 +48,7 @@ public class Board {
         freeboard.setRegdate(LocalDateTime.now());
         return freeboard;
     }
+
 
 
 

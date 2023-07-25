@@ -6,30 +6,22 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.auth.PrincipalDetails;
-import com.yezi.secretgarden.domain.User;
 
 import com.yezi.secretgarden.domain.UserRequestDto;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private ObjectMapper objectMapper = new ObjectMapper(); // json 데이터를 파싱해줌
@@ -115,7 +107,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
-        String jwtToken = provider.createToken(principalDetails.getUsername());
+        String jwtToken = provider.createToken(principalDetails.getUsername(),principalDetails.getUser());
         System.out.println("generated jwt token : "+jwtToken);
 
 
@@ -130,14 +122,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         System.out.println("successful Authentication : 실행 완료!");
     }
 
+
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        loginFailHandler.onAuthenticationFailure(request, response, failed);
-
-
     }
-
-
 }
 
 /*

@@ -8,6 +8,7 @@
 <body>
 <!--------------------- header --------------------->
 <header th:replace="/fragments/header.html :: fragment-header">
+
 </header>
     <!----------- main ------------->
     <main>
@@ -21,19 +22,17 @@
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">제목</th>
                     <th scope="col">작성자</th>
+                    <th scope="col">제목</th>
                     <th scope="col">조회수</th>
-                    <th scope="col">댓글수</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="board : ${boardList}">
                     <th scope="row">1</th>
-                    <td><a th:href="@{/secretgarden/board/{boardId}(boardId=${board.id})}" th:text="${board.id}"></a></td>
-                    <td></td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
+                    <td th:text="${board.id}"></a></td>
+                    <td><a th:href="@{/secretgarden/board/{boardId}(boardId=${board.id})}" th:text="${board.title}"></a></td>
+                    <td th:text="${board.user.username}"></td>
                 </tr>
 
                 

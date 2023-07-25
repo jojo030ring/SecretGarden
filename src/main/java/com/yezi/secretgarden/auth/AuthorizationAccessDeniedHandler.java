@@ -1,6 +1,9 @@
 package com.yezi.secretgarden.auth;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import javax.servlet.ServletException;
@@ -14,6 +17,7 @@ import java.io.IOException;
 public class AuthorizationAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        System.out.println(1111);
         response.sendRedirect("/secretgarden/");
     }
 }

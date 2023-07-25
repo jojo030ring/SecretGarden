@@ -22,8 +22,9 @@ public class BoardService {
     }
 
     @Transactional
-    public void modifyPost(Long boardId, Board post) {
+    public void modifyPost(Long boardId, BoardRegisterRequest post) {
         Board targetPost = boardRepository.getBoard(boardId);
+        System.out.println(targetPost);
         targetPost.setTitle(post.getTitle());
         targetPost.setContent(post.getContent());
 
@@ -44,5 +45,11 @@ public class BoardService {
         return boardRepository.getBoard(id);
     }
 
+    @Transactional
+    public void addCount(Long id) {
+        Board board = boardRepository.getBoard(id);
+        board.setCnt(board.getCnt()+1);
+
+    }
 
 }
