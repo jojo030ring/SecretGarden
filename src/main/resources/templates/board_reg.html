@@ -26,7 +26,7 @@
                 alert(1);
                 deleteData("/secretgarden/delete/"+id);
             });
-            $("#list").click(function() {
+            $("#listBtn").click(function() {
                 location.href="/secretgarden/board";
             });
         });
@@ -85,7 +85,6 @@
             switch (mode) {
                 case "READ_MODE" :
                     $('input,textarea').attr("readonly","true");
-                    $('#postBtn').attr("id", "list");
                     break;
                 case "MODIFY_MODE" :
                     $('#modBtn').css("display","none");
@@ -136,7 +135,9 @@
                             <textarea name="content" id="content" class="form-control" rows="10" th:text="${board?.content}"></textarea>
 
                         </div>
-                        <button type="button" id="postBtn" class="btn btn-primary my-2">저장하기</button>
+
+                            <button th:if="${MODE}=='READ_MODE'" type="button" id="listBtn" class="btn btn-primary my-2">목록으로</button>
+                            <button th:unless="${MODE}=='READ_MODE'" type="button" id="postBtn" class="btn btn-primary my-2">저장하기</button>
 
 
 

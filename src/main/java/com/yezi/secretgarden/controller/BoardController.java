@@ -2,12 +2,15 @@ package com.yezi.secretgarden.controller;
 
 import com.yezi.secretgarden.auth.PrincipalDetails;
 import com.yezi.secretgarden.domain.Board;
+import com.yezi.secretgarden.domain.PageDto;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.request.BoardRegisterRequest;
 import com.yezi.secretgarden.jwt.JwtTokenUtil;
 import com.yezi.secretgarden.service.BoardService;
+import com.yezi.secretgarden.service.PageService;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,11 +37,16 @@ public class BoardController {
     private JwtTokenUtil jwtTokenUtil=new JwtTokenUtil();
 
     private final BoardService boardService;
-    private final UserService userService;
-
+    private final PageService pageService;
     @GetMapping("/board")
-    public String boardList(Model m) {
-        m.addAttribute("boardList",boardService.getBoardList());
+    // @RequestParam : query param형식의 파라미터 받아옴
+    public String boardList(Model m,@RequestParam(defaultValue = "1") int page) {
+        int totalBoardCnt = pageService.getTotalCount();
+        int limit = pageService.BOARD_LIMIT;
+        m.addAttribute("boardList",pageService.getPage(page,limit));
+        PageDto pageDto = PageDto.builder().page(page).pageLimit(limit).totalBoardCnt(totalBoardCnt).build();
+        m.addAttribute("pageDto",pageDto);
+
         return "board";
     }
     @GetMapping("/board/{id}")

@@ -7,7 +7,7 @@
     height: 300px;
 
 }
-.jumbotron > div > h1{
+.jumbotron > div > a > h1{
     font-family: 'Nanum Myeongjo', serif;
     font-weight: bold;
     font-size : 32px;

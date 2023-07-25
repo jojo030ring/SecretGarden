@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.auth.PrincipalDetails;
 
-import com.yezi.secretgarden.domain.UserRequestDto;
+import com.yezi.secretgarden.domain.request.UserRequestDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
