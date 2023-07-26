@@ -14,6 +14,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.HashMap;
 
 @Controller
@@ -32,7 +33,7 @@ public class UserController {
         value = "/register"
         , headers="Accept=application/json")
     @ResponseBody
-    public ResponseEntity<HashMap<String,String>> register( @RequestBody UserRegisterRequest uRRequest) { // @Valid 테스트를 위해서 빼놓음
+    public ResponseEntity<HashMap<String,String>> register( @RequestBody @Valid UserRegisterRequest uRRequest) { // @Valid 테스트를 위해서 빼놓음
         userService.registerUser(uRRequest);
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","회원 가입을 완료했습니다.");

@@ -14,7 +14,6 @@ import java.util.List;
 @Table(name="users")
 @Getter
 @Setter
-@ToString
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 프록시 객체를 위함
 public class User {

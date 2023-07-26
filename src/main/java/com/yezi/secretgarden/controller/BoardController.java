@@ -5,39 +5,37 @@ import com.yezi.secretgarden.domain.Board;
 import com.yezi.secretgarden.domain.PageDto;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.request.BoardRegisterRequest;
-import com.yezi.secretgarden.jwt.JwtTokenUtil;
+import com.yezi.secretgarden.domain.request.SearchCondition;
 import com.yezi.secretgarden.service.BoardService;
 import com.yezi.secretgarden.service.PageService;
-import com.yezi.secretgarden.service.UserService;
+import com.yezi.secretgarden.service.SearchService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/secretgarden")
 public class BoardController {
-    private JwtTokenUtil jwtTokenUtil=new JwtTokenUtil();
-
     private final BoardService boardService;
     private final PageService pageService;
+    private final SearchService searchService;
     @GetMapping("/board")
     // @RequestParam : query param형식의 파라미터 받아옴
     public String boardList(Model m,@RequestParam(defaultValue = "1") int page) {
@@ -75,7 +73,7 @@ public class BoardController {
 
     @PostMapping("/post")
     @ResponseBody
-    public ResponseEntity<HashMap<String, String>> boardPost(Authentication authentication, @RequestBody BoardRegisterRequest bRRequest, Model m) {
+    public ResponseEntity<HashMap<String, String>> boardPost(Authentication authentication, @RequestBody @Valid BoardRegisterRequest bRRequest, Model m) {
         // JPA 영속상태때문에 바로 추출할 수가 없다.
         User user = getUserInfo(authentication);
         boardService.savePost(user,bRRequest);
@@ -134,6 +132,29 @@ public class BoardController {
         boardService.deletePost(id);
         return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    public String getSearchList(@RequestParam String category , @RequestParam String keyword, @RequestParam(defaultValue = "1") int page, Model m) {
+        // searchService
+        SearchCondition sc = SearchCondition.builder().keyword(keyword).category(category).build();
+        Long searchCnt = searchService.getSearchCnt(sc);
+        PageDto pageDto = PageDto.builder().page(page).pageLimit(pageService.BOARD_LIMIT).totalBoardCnt(searchCnt.intValue()).build();
+        List<Board> list = searchService.search(sc,pageDto);
+        System.out.println("list.toString() = " + list.toString());
+        // attribute
+        m.addAttribute("boardList",list);
+        m.addAttribute("pageDto",pageDto);
+        m.addAttribute("category",category);
+        m.addAttribute("keyword",keyword);
+
+        // RedirectAttribute 어쩌구는 redirect되기 때문에 get방식으로 들어가서 body에 담을 수가 없구나...
+
+
+
+        return "board";
+    }
+
+
 
     public boolean requestValidUser(String userId, Board board) {
         return board.getUser().getUsername().equals(userId);

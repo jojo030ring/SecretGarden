@@ -14,25 +14,119 @@
                 $("#user_domain").attr("readOnly",true); //비활성화
             }
 
-            $("#domain option:selected").each(function () {
-                $('#domain').change(function(){
 
-                    if($(this).val()== '1'){ //직접입력일 경우
-                        $("#user_domain").val('');                        //값 초기화
-                        $("#user_domain").attr("readOnly",false); //활성화
-                    }else{ //직접입력이 아닐경우
-                        $("#user_domain").val($(this).text());      //선택값 입력
-                        $("#user_domain").attr("readOnly",true); //비활성화
+            $('#domain').change(function(){
+                if($(this).val()== '1'){ //직접입력일 경우
+                    $("#user_domain").val('');//값 초기화
+                    $("#user_domain").attr("readOnly",false); //비활성화
+                }else{ //직접입력이 아닐경우
+                    $("#user_domain").val($("#domain option:selected").text());      //선택값 입력
+                    $("#user_domain").attr("readOnly",true); //활성화
+                }
+            });
+
+
+
+            let userIdCheck = RegExp(/^[A-Za-z0-9_\-]{4,10}$/); // 영문, 대소문자, 숫자, _만 입력 가능 4자 ~20자
+            let passwdCheck = RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^*()\-_=+\\\|\[\]{};:\'",.<>\/?]).{8,16}$/); // 영문 대문자, 소문자, 숫자, 특수문자를 하나 이상 포함하여 저장(8-16자)
+            let nameCheck = RegExp(/^[가-힣a-zA-Z]+$/); // 이름 : 2-10글자의 한글만 사용했는지 검사
+            let emailCheck = RegExp(/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/); // 이메일 : 이메일 형식에 맞게 작성했는지 확인
+            let phonenumCheck=RegExp(/^\d{2,3}-?\d{3,4}-?\d{4}$/);
+            deleteBox("span.help-block");
+                ////////// id check /////////
+                $('#id').keyup(function() {
+                    if(!userIdCheck.test($('#id').val())){
+                        $('#idCheckResult').css({
+                            display : 'block',
+                            color : 'red'
+                        });
+                    } else {
+                        deleteBox('#idCheckResult');
+
                     }
                 });
-            });
+                $('#password').keyup(function() {
+                    if(!passwdCheck.test($('#password').val())){
+                        $('#pwdCheckResult').css({
+                            display : 'block',
+                            color : 'red'
+                        });
+                    } else {
+                        deleteBox('#pwdCheckResult');
+                    }
+                });
+                $('#email_id').keyup(function() {
+                    let email =$('#email_id').val()+'@'+$('#domain').val();
 
-            $("#registerBtn").click(function(event) {
-                submitData();
-            });
+                    if(!emailCheck.test(email)){
+                        $('#emailCheckResult').css({
+                            display : 'block',
+                            color : 'red'
+                        });
+                    } else {
+                        deleteBox('#emailCheckResult');
+                    }
+                });
+                /*
+                $('#id').keyup(function() {
+                    if(!userIdCheck.test($('#id').val())){
+                        $('#idCheckResult').css({
+                            display : 'block',
+                            color : 'red'
+                        }).text("아이디는 4자 이상 최대 20자로 영문, 숫자, _만 입력가능합니다. 입력형식을 확인해주세요.");
+
+                    } else {
+                        $('#idCheckResult').css('display','none');
+                    }
+                });*/
+                $('#name').keyup(function() {
+                    if(!nameCheck.test($('#name').val())){
+                        $('#nameCheckResult').css({
+                            display : 'block',
+                            color : 'red'
+                        });
+                    } else {
+                        deleteBox('#nameCheckResult')
+                    }
+                });
 
 
+
+
+
+                $('#registerBtn').click(function(event) {
+                    if(!allFormCheck()) {
+                        $('#finalCheck').css('display','block');
+                        return false;
+                    } else {
+                        submitData();
+                    }
+                });
+
+
+
+            function deleteBox(selector) {
+
+                $(selector).css('display','none');
+
+            }
+
+            function allFormCheck() {
+                let name = $('#name').val();
+                let phonenum = $('#phonenum').val();
+                let id = $('#id').val();
+                let password=$('#password').val();
+                let email=$('#email_id').val()+'@'+$('#domain').val();
+                if(userIdCheck.test(id)&&phonenumCheck.test(phonenum)&&
+                    passwdCheck.test(password)&& emailCheck.test(email) && nameCheck.test(name)){
+                    return true;
+                }
+                return false;
+            }
         });
+
+
+
         function submitData() {
             let form = $("#form").serializeArray(); // json 데이터를 위한
             let object = {};
@@ -65,6 +159,17 @@
 
         }
         /*]]>*/
+        //////////////////////////////////////////////////////////////////
+        //                     회원 가입 폼 기반
+        //////////////////////////////////////////////////////////////////
+
+        function formCheck() {
+            // https://ming9mon.tistory.com/81
+
+
+        }
+
+
     </script>
 
     <title>Document</title>
@@ -81,19 +186,26 @@
                     <div class="mb-3 col-md-12 form-floating">
                         <input type="text" class="form-control" name="id" id="id" placeholder="input id">
                         <label for="id">아이디</label>
+                        <span class = "help-block" id="idCheckResult">아이디는 영문, 숫자, _만 입력가능합니다.(4-20) 입력형식을 확인해주세요.</span>
                     </div>
                     <div class="mb-3 col-md-12 form-floating">
                         <input type="password" class="form-control" name="password" id="password" placeholder="input pw">
                         <label for="password">패스워드</label>
+                        <span class = "help-block" id="pwdCheckResult">비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 하나 이상 포함해야합니다.(8-16) 입력형식을 확인해주세요.</span>
+
                     </div>
                     <div class="mb-3 col-md-12 form-floating">
                         <input type="password" class="form-control" name="password_repeat" id="password_repeat" placeholder="input pw">
                         <label for="password">패스워드 재입력</label>
+                        <span id="rePwdCheckResult" class="help-block">비밀번호와 일치하지 않습니다. 다시 입력해 주세요.</span>
+
                     </div>
                     <div class="hint"></div>
                     <div class="mb-3 col-md-12 form-floating">
                         <input type="name" class="form-control" name="name" id="name" placeholder="input name">
                         <label for="name">이름</label>
+                        <span class = "help-block" id="nameCheckResult">이름 입력형식을 확인해주세요.</span>
+
                     </div>
                     <div class="mb-3 d-flex flex-row align-items-stretch form-floating">
                             <input type="text" class="form-control" name="email_id" id="email_id" placeholder="input id">
@@ -102,21 +214,27 @@
                             <input type="text" class="form-control" name="user_domain" id="user_domain" placeholder="input domain">
 
                     </div>
-                <!-- 직접 입력부분 > react -->
+                <!-- 직접 입력부분  -->
                     <select class="form-select form-select-lg mb-3" aria-label="server-name" id="domain">
                         <option selected value="naver.com">naver.com</option>
                         <option value="gmail.com">gmail.com</option>
                         <option value="daum.net">daum.net</option>
                         <option value="1">직접입력</option>
                     </select>
-                    <div class="mb-3 col-md-12 form-floating">
+
+
+                <span class="col-md-12 help-block" id="emailCheckResult">이메일 입력형식을 확인해주세요.</span>
+
+                <div class="mb-3 col-md-12 form-floating">
                         <input type="text" class="form-control" id="phonenum" name="phonenum" placeholder="input pw">
                         <label for="phonenum">H.P</label>
-                    </div>
-                    <div class="mb-3 col-md-12 d-flex flex-row justify-content-md-evenly">
-                        <button type="button" class="btn btn-outline-success px-5" id="registerBtn">회원가입</button>
-                        <a class="btn btn-outline-secondary px-5" href="./index.html" role="button">홈으로</a>
-                    </div>
+                </div>
+                <span class = "help-block" id="phonenumCheckResult">XXX-XXXX-XXXX 형식으로 입력해주세요.</span>
+
+                <div class="mb-3 col-md-12 d-flex flex-row justify-content-md-evenly">
+                    <button type="button" class="btn btn-outline-success px-5" id="registerBtn">회원가입</button>
+                    <a class="btn btn-outline-secondary px-5" href="index_diary.html" role="button">홈으로</a>
+                </div>
             </div>
         </form>
 

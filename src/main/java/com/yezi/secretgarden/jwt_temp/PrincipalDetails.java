@@ -1,44 +1,44 @@
-package com.yezi.secretgarden.auth;
+package com.yezi.secretgarden.jwt_temp;
 
 import com.yezi.secretgarden.domain.User;
-import com.yezi.secretgarden.service.LoggerService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-
 
 
 public class PrincipalDetails implements UserDetails {
 
 
-    private User user;
-    public PrincipalDetails(User target) {
-        this.user = target;
+
+    String username;
+    String auth;
+    public PrincipalDetails(String id, String auth) {
+        this.username = username;
+        this.auth = auth;
+
+
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        user.getRoleList().forEach(r->{
+        Arrays.stream(auth.split(",")).forEach(r->{
             authorities.add(()-> r);
         });
         return authorities;
     }
-    public User getUser() {
-        return user;
-    }
+
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return username;
     }
 
     @Override

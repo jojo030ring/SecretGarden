@@ -11,6 +11,43 @@
 
 </header>
     <!----------- main ------------->
+<!--    <script th:inline="javascript">-->
+<!--        $(document).ready(function() {-->
+<!--            $("#searchBtn").click(function() {-->
+<!--                submitData("/secretgarden/search");-->
+<!--            });-->
+<!--        });-->
+
+<!--        function submitData(url) {-->
+<!--            let form = $("#searchForm").serializeArray(); // json 데이터를 위한-->
+<!--            let object = {};-->
+<!--            for (let i = 0; i < form.length; i++) {-->
+<!--                object[form[i]['name']] = form[i]['value'];-->
+<!--            }-->
+
+<!--            $.ajax({-->
+<!--                url: url,-->
+<!--                method: "get",-->
+<!--                dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함-->
+<!--                // text로 받는게 맞다-->
+<!--                contentType: "application/json; charset=utf-8",-->
+<!--                data: JSON.stringify(object),-->
+<!--                success: function (result) {-->
+<!--                    let obj = JSON.parse(result);-->
+<!--                    alert(obj.msg);-->
+<!--                    location.href = url;-->
+<!--                },-->
+<!--                error: function (request, status, error) {-->
+<!--                    alert("다시 입력해주세요.");-->
+
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+
+
+
+<!--    </script>-->
     <main>
         <!-- 글 목록 -->
 
@@ -18,21 +55,23 @@
             <div class="table-responsive ">
                 <a th:href="@{/secretgarden/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
 
-            <table class="table">
+            <table class="table text-center">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">작성자</th>
                     <th scope="col">제목</th>
                     <th scope="col">조회수</th>
+                    <th scope="col">작성일</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="board : ${boardList}">
-                    <th scope="row" th:text="${board.id}"></th>
-                    <td th:text="${board.user.username}"></a></td>
-                    <td><a th:href="@{/secretgarden/board/{boardId}(boardId=${board.id})}" th:text="${board.title}"></a></td>
-                    <td th:text="${board.cnt}"></td>
+                    <th class="col-md-1" scope="col" th:text="${board.id}"></th>
+                    <td class="col-md-3" th:text="${board.user.username}"></a></td>
+                    <td class="col-md-4"><a th:href="@{/secretgarden/board/{boardId}(boardId=${board.id})}" th:text="${board.title}"></a></td>
+                    <td class="col-md-1" th:text="${board.cnt}"></td>
+                    <td class="col-md-3" th:text ="${#temporals.format(board.regdate, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 </tr>
 
                 
@@ -42,18 +81,18 @@
         </div>
         </div>
         <!-- search -->
-        <form>
+        <form id="searchForm" method="get" action="/secretgarden/search">
 
             <div class="input-group mb-3 mx-auto w-25">
                 <div class="w-25">
-                    <select class="form-select">
+                    <select class="form-select" th:name="category">
                         <option value="title" selected>제목</option>
                         <option value="content">내용</option>
                     </select>
                 </div>
 
-                <input type="text" class="form-control" id="searchbox" placeholder= "검색어는 두글자 이상" aria-describedby="submit-button">
-                <button class="btn btn-outline-secondary" type="submit" id="submit-button" href="#">검색</button>
+                <input type="text" class="form-control" name ="keyword" id="keyword" placeholder= "검색어는 두글자 이상" aria-describedby="submit-button">
+                <button class="btn btn-outline-secondary" type="submit" id="searchBtn" >검색</button>
             </div>
         </form>
 
@@ -61,26 +100,33 @@
         <!-- pagenation -->
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
-                <li th:if="${!pageDto.prev}" th:class="page-item disabled">
-                    <a class="page-link">Previous</a>
-                </li>
-                <li th:unless="${pageDto.prev}" th:class="page-item">
-                    <a class="page-link">Previous</a>
-                </li>
-                <th:block th:with="start=${pageDto.startPage}, end=${pageDto.endPage}">
 
-                    <li class="page-item" th:each="num : ${#numbers.sequence(start,end)}">
-                        <a class="page-link" th:href="@{/secretgarden/board/?page={num} (num=${num})}" th:text="${num}"></a>
+                    <li th:if = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:class="page-item" th:style="${pageDto.prev ? 'display:block' :'display:none'}">
+                        <a class="page-link" th:href="@{/secretgarden/board?page={num} (num=${pageDto.endPage-pageDto.pageLimit})}">Prev</a>
+                    </li>
+                    <li th:unless = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:class="page-item" th:style="${pageDto.prev ? 'display:block' :'display:none'}">
+                        <a class="page-link" th:href="@{/secretgarden/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${pageDto.endPage-pageDto.pageLimit})}">Prev</a>
                     </li>
 
 
+
+                <th:block th:with="start=${pageDto.startPage}, end=${pageDto.endPage}">
+                    <li th:if = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" class="page-item" th:each="num : ${#numbers.sequence(start,end)}">
+                        <a class="page-link" th:href="@{/secretgarden/board?page={num} (num=${num})}" th:text="${num}"></a>
+                    </li>
+                    <li th:unless ="${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" class="page-item" th:each="num : ${#numbers.sequence(start,end)}">
+                        <a class="page-link" th:href="@{/secretgarden/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${num}) }" th:text="${num}" ></a>
+                    </li>
                 </th:block>
-                <li th:if="${!pageDto.next}" th:class="page-item disabled">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-                <li th:unless="${pageDto.next}" th:class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
+
+                    <li th:if ="${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:style="${pageDto.next ? 'display:block' :'display:none'}">
+                        <a class="page-link"
+                           th:href="@{/secretgarden/board?page={num} (num=${pageDto.endPage+1})}">Next</a>
+                    </li>
+                    <li th:unless = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:class="page-item" th:style="${pageDto.next ? 'display:block' :'display:none'}">
+                        <a class="page-link" th:href="@{/secretgarden/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${pageDto.endPage+1})}">Next</a>
+                    </li>
+
             </ul>
         </nav>
     </main>

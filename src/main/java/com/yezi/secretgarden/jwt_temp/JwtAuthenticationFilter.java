@@ -1,27 +1,23 @@
-package com.yezi.secretgarden.jwt;
+package com.yezi.secretgarden.jwt_temp;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yezi.secretgarden.auth.LoginFailHandler;
+import com.yezi.secretgarden.auth.PrincipalDetails;
+import com.yezi.secretgarden.domain.request.UserRequestDto;
+import com.yezi.secretgarden.service.LoggerService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.querydsl.jpa.hibernate.SessionHolder;
-import com.yezi.secretgarden.auth.LoginFailHandler;
-import com.yezi.secretgarden.auth.PrincipalDetails;
-
-import com.yezi.secretgarden.domain.request.UserRequestDto;
-import com.yezi.secretgarden.service.LoggerService;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -99,7 +95,6 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
             // authentication 객체가 session 영역에 저장됨 > 그 방법이 return 하는 것
             // 리턴의 이유는 권한 관리를 security 대신 해주므로 편하라고 하는 것
             // 굳이 JWT를 사용하면서 세션을 만들 이유는 없지만 권한처리때문에 세션에 넣어준다.
-            SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -129,7 +124,6 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
 
         loggerService.infoLoggerTest("JwtAuthenticationFilter > successful Authentication() 실행 완료!");
-
     }
 
 

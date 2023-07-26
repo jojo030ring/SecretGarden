@@ -1,22 +1,12 @@
-package com.yezi.secretgarden.jwt;
+package com.yezi.secretgarden.jwt_temp;
 
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.yezi.secretgarden.auth.PrincipalDetails;
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.service.UserService;
-import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -26,10 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.Date;
 
 
 /**
@@ -54,8 +40,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        logger.info(SecurityContextHolder.getContext());
-
         String jwt = jwtTokenUtil.getJwtFromCookie(request); // cookie에서 원형 jwt를 받아옴
         // jwt 토큰을 검증해서 정상적인 토큰인지 확인
         if (jwt == null || !jwt.startsWith("Bearer ")) {
@@ -68,22 +52,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         jwt = jwt.replace("Bearer ", "");
         // cookie에서 가져온 jwt를 이용하여 id를 추출함
         String id = jwtTokenUtil.getLoginId(jwt);
+        String auth = jwtTokenUtil.getAuth(jwt,"auth");
             // id가 null이 아닐 경우,
             if (id != null) {
-                // userEntity를 받아옴
-                User userEntity = userService.findUser(id);
-                // userEntity가 없다 == DB에 들어있지 않다, 근데 id는 있다?
-                if(userEntity == null) {
-                    // db가 삭제되어있는데 쿠키는 남아있는 경우
-                    // cookie를 삭제해준다
-                    Cookie cookie = WebUtils.getCookie(request, "token");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                    chain.doFilter(request,response); // 다음 필터로 이동시킨다
-                    return;
-                }
+
+//                if(userEntity == null) {
+//                    // db가 삭제되어있는데 쿠키는 남아있는 경우
+//                    // cookie를 삭제해준다
+//                    Cookie cookie = WebUtils.getCookie(request, "token");
+//                    cookie.setMaxAge(0);
+//                    response.addCookie(cookie);
+//                    chain.doFilter(request,response); // 다음 필터로 이동시킨다
+//                    return;
+//                }
                 // Authentication을 위한 PrincipalDetails를 하고 userEntity를 넣어준다.
-                PrincipalDetails principalDetails = new PrincipalDetails(userEntity);
+                PrincipalDetails principalDetails = new PrincipalDetails(id,auth);
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(
                                 principalDetails,

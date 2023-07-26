@@ -1,11 +1,10 @@
-package com.yezi.secretgarden.jwt;
+package com.yezi.secretgarden.jwt_temp;
 
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.service.LoggerService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
@@ -16,13 +15,14 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-//@Component
+@Component
 public class JwtTokenUtil {
     // JWT Token 발급
     private final String secretKey="a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ";
     private final Long exp = 86400*1000L;
     private final Key key;
-    private LoggerService loggerService = new LoggerService();
+    @Autowired
+    private LoggerService loggerService;
 
     // Base64로 인코딩 된 비밀키를 hmacsha 방식으로 말아준다.
     public JwtTokenUtil() {
@@ -62,10 +62,27 @@ public class JwtTokenUtil {
     // 타임리프를 위한 메서드 - 토큰으로부터 Bearer를 제외한 퓨어한 jwt를 얻어낸 뒤, id를 뽑아내는 메서드
     public String getLoginId(HttpServletRequest request) {
         String token = getJwtFromCookie(request); // Bearer + jwt
-        loggerService.infoLoggerTest("JWTTokenUtil > userId :" + token);
+        token = getPureJwt(request);
+        if (token != null) {
+            token = token.replace("Bearer ", "");
+            return extractClaims(token).get("id", String.class);
+        } else
+            return null;
+
+    }
+    // 순수한 jwt를 얻는 메서드
+    public String getPureJwt(HttpServletRequest request) {
+        String token = getJwtFromCookie(request); // Bearer + jwt
         if(token != null) {
             token = token.replace("Bearer ", "");
-            return extractClaims(token).get("id",String.class);
+            return token;
+        } else {
+            return null;
+        }
+    }
+    public String getAuth(String token, String target) {
+        if (token != null) {
+            return extractClaims(token).get("Auth", String.class);
         } else
             return null;
 
