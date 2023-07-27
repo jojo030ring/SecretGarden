@@ -94,7 +94,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                             principalDetails,
                             null,
                             principalDetails.getAuthorities());
-
+            // 인가처리를 위해 임시로 세션영역에 담음. 이 인가처리 부분은 하나의 요청 플로우에 잠시 담겼다가 삭제됨
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
