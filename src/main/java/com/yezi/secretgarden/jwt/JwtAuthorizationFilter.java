@@ -64,7 +64,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
          * - 지원되지 않는 토큰인 경우 >> 위와 동일
          */
         // 토큰이 없거나 토큰에 문제가 생긴 경우인데, 토큰이 있는 경우
-        if(jwt== null || !jwtTokenUtil.validateToken(jwt)) {
+        if(!jwtTokenUtil.validateToken(jwt)) {
             // token이라고 명해진 쿠키를 받아온다
             Cookie tokenInCookie = WebUtils.getCookie(request,"token");
             // token이 존재하면 cookie를 없애주어야 한다
