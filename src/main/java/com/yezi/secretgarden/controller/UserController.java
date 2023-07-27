@@ -1,6 +1,7 @@
 package com.yezi.secretgarden.controller;
 
 import com.yezi.secretgarden.domain.request.UserRegisterRequest;
+import com.yezi.secretgarden.jwt.JwtTokenUtil;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final JwtTokenUtil jwtTokenUtil;
     @Value("${header.url.secretgarden}")
     private String HOME_PATH;
     @GetMapping("/register")
@@ -47,8 +49,8 @@ public class UserController {
     @GetMapping("/login")
     public String loginForm(HttpServletRequest request) {
         Cookie token = WebUtils.getCookie(request,"token");
-        if(token != null) {
-            return "redirect:"+HOME_PATH+"/login";
+        if(token != null && jwtTokenUtil.validateToken(jwtTokenUtil.getPureJWT(jwtTokenUtil.decodeFromCookieToJWT(request)))) { // 쿠키가 있다..?
+            return "redirect:"+HOME_PATH+"/";
         }
 
         return "login";

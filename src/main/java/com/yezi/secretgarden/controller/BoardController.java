@@ -11,6 +11,7 @@ import com.yezi.secretgarden.service.PageService;
 import com.yezi.secretgarden.service.SearchService;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -34,6 +35,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("${header.url.secretgarden}")
+@Slf4j
 public class BoardController {
     private final UserService userService;
     private final BoardService boardService;
@@ -68,8 +70,10 @@ public class BoardController {
     }
 
     @GetMapping("/post")
-    public String postForm(Principal principal, HttpServletRequest request, Model m) {
+    public String postForm(Principal principal, Model m) {
+
         String id = principal.getName();
+        log.warn("BoardController _ Principal.getName() : "+id);
         m.addAttribute("userId",id);
         m.addAttribute("MODE","POST_MODE");
 

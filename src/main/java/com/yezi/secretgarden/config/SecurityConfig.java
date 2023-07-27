@@ -56,9 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                    크로스 오리진 요청이 와도 다 허용됨 @CrossOrigin(인증 x) / 시큐리티 필터에 등록 인증(O)
                  * Spring Security 사용시 CORS 설정을 하기 위해서 Authentication Filter 인증보다 앞에 필터를 추가해주어야 한다.
                  */
-                /*
-                 *   3번 설명 보자...
-                 */
                 .authorizeRequests()
                 .antMatchers("/secretgarden/login", "/secretgarden/register").permitAll()
                 .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden","/secretgarden/post/**")

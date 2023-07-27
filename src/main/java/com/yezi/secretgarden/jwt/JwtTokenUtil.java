@@ -49,37 +49,39 @@ public class JwtTokenUtil {
                 .signWith(key) // 앞서 말아준 비밀키로 시그니처를 생성한다
                 .compact());   // url-safe한 형태로 발급된 jwt 토큰을 문자열로 반환한다.
 
-        log.info("JWTTokenUtil > generated Token : "+sb.toString());
+        log.debug("JWTTokenUtil > generated Token : "+sb.toString());
         return sb.toString();
     }
-
+//////////////////////////////////////////////////////////////////
     // Bearer << 여기 들어갔던 공백때문에 URL인코딩 했던 token을 다시 변환해준다.
     public String decodeFromCookieToJWT(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request,"token");
         String jwt = (cookie == null) ? null : URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-        log.info("decodeFromCookieToJWT _ token : "+jwt);
+        log.debug("decodeFromCookieToJWT _ token : "+jwt);
         return jwt;
     }
     // 타임리프를 위한 메서드 - 토큰으로부터 Bearer를 제외한 퓨어한 jwt를 얻어낸 뒤, id를 뽑아내는 메서드
 
+/////////////////////////////////////////////////////////
 
-
-    // JWTAuthorizationFilter에서 사용되는 메서드
-    // Bearer 로 시작하는지, null인지를 검증하게 된다.
-    public String getPureJWT(String token) {
-        if(isJWTForm(token)) {
-            String returnToken= token.replace("Bearer ","");
-            log.info("getPureJWT _ token : "+returnToken);
-            return returnToken;
-        } else {
-            return null;
-        }
-    }
     public boolean isJWTForm(String token) {
         return token != null && token.startsWith("Bearer ");
     }
     // SecretKey를 사용해 Token Parsing
     // 이때 쿠키를 변조하면 에러를 내게 된다.
+    // JWTAuthorizationFilter에서 사용되는 메서드
+    // Bearer 로 시작하는지, null인지를 검증하게 된다.
+
+    public String getPureJWT(String token) {
+        if(isJWTForm(token)) {
+            String returnToken= token.replace("Bearer ","");
+            log.debug("getPureJWT _ token : "+returnToken);
+            return returnToken;
+        } else {
+            return null;
+        }
+    }
+/////////////////////////////////////////////////////
 
     public boolean validateToken(String token) {
 
@@ -100,11 +102,12 @@ public class JwtTokenUtil {
     }
 
     ////////////////////////////////////////////////////
+    // pure token 형태로 전해주어야 함
     public String getLoginId(String token) {
         if(token != null && validateToken(token)) {
             String loginId;
             loginId = extractClaims(token).get("id").toString();
-            log.info(loginId);
+            log.debug(loginId);
             return loginId;
 
         } else {
@@ -112,16 +115,13 @@ public class JwtTokenUtil {
         }
 
     }
-    public String getLoginId(HttpServletRequest request) {
-        String token = decodeFromCookieToJWT(request); // Bearer + jwt
-        if(isJWTForm(token)) {
-            token = getPureJWT(token);
-            return getLoginId(token);
-        } else {
-            return null;
-        }
 
+    public String getLoginId(HttpServletRequest request) {
+        return getLoginId(getPureJWT(decodeFromCookieToJWT(request)));
     }
+
+
+
     public String getAuth(String token) {
         if(token != null && validateToken(token)) {
             return extractClaims(token).get("auth").toString();
