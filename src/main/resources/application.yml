@@ -63,5 +63,7 @@ jwt:
 #  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   secret : a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ
 #HS256 알고리즘을 사용하기 위해 256비트보다 더 커야함.
-#32 글자 이상이면 됨
-  token-validity-in-seconds : 86400 #초, 1000 곱해서 써야함
+
+header:
+    url:
+      secretgarden: /secretgarden

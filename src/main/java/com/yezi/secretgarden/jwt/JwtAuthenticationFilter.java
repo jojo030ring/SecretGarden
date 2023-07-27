@@ -11,7 +11,7 @@ import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.auth.PrincipalDetails;
 
 import com.yezi.secretgarden.domain.request.UserRequestDto;
-import com.yezi.secretgarden.service.LoggerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -25,13 +25,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
+@Slf4j
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     // json 데이터를 객체 형태로 파싱해주는 objectMapper를 생성
     private ObjectMapper objectMapper = new ObjectMapper();
     // JWTToken과 관련된 클래스를 생성
     private JwtTokenUtil provider = new JwtTokenUtil();
-    private LoggerService loggerService = new LoggerService();
     /**
      * Spring security가 제공하는 login page를 다른 것으로 변환
      */
@@ -105,7 +104,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         // token을 생성하는 부분 > 미리 생성해두었던 JwtTokenUtil을 이용
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
         String jwtToken = provider.createToken(principalDetails.getUsername(),principalDetails.getStringAuth());
-        loggerService.infoLoggerTest("JwtAuthenticationFilter > 토큰생성완료!");
+        log.info("JwtAuthenticationFilter > 토큰생성완료!");
 
 
         Cookie cookie = new Cookie("token", URLEncoder.encode(jwtToken, StandardCharsets.UTF_8));
@@ -117,12 +116,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         response.sendRedirect("/secretgarden/board");
 
 
-        loggerService.infoLoggerTest("JwtAuthenticationFilter > successful Authentication() 실행 완료!");
+       log.info("JwtAuthenticationFilter > successful Authentication() 실행 완료!");
 
     }
 
 
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-    }
+
 }

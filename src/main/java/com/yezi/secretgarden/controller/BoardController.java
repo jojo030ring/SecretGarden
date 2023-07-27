@@ -11,6 +11,7 @@ import com.yezi.secretgarden.service.PageService;
 import com.yezi.secretgarden.service.SearchService;
 import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +33,14 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/secretgarden")
+@RequestMapping("${header.url.secretgarden}")
 public class BoardController {
     private final UserService userService;
     private final BoardService boardService;
     private final PageService pageService;
     private final SearchService searchService;
+    @Value("${header.url.secretgarden}")
+    private String HOME_PATH;
     @GetMapping("/board")
     // @RequestParam : query param형식의 파라미터 받아옴
     public String boardList(Model m,@RequestParam(defaultValue = "1") int page) {
@@ -50,7 +53,7 @@ public class BoardController {
         return "board";
     }
     @GetMapping("/board/{id}")
-    public String getBoard(Principal principal,HttpServletRequest request, HttpServletResponse response, Model m, @PathVariable("id") Long id, RedirectAttributes ra) throws IOException {
+    public String getBoard(HttpServletRequest request, HttpServletResponse response, Model m, @PathVariable("id") Long id, RedirectAttributes ra) throws IOException {
 
         Board board = boardService.getBoard(id);
         String userId = board.getUser().getUsername();
@@ -81,22 +84,19 @@ public class BoardController {
         boardService.savePost(user,bRRequest);
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","게시글 등록을 완료했습니다.");
-        map.put("url","/secretgarden/board");
+        map.put("url",HOME_PATH+"/board");
         m.addAttribute("MODE","POST_MODE");
         return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
 
     @GetMapping("/modify/{id}")
-    public String modifyForm( Principal principal, @PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response, Model m) throws IOException {
+    public String modifyForm(Principal principal, @PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response, Model m) throws IOException {
         Board board = boardService.getBoard(id);
         String userId = principal.getName();
 
         if(board==null || !requestValidUser(userId,board)) {
             doInvalidRequestAction(request,response);
         }
-
-
-        // 여기까지 들어왔다는 건 인가된 사용자라는 뜻이기에 cookie null check는 생략
 
         m.addAttribute("board",board);
         m.addAttribute("id",id);
@@ -107,19 +107,18 @@ public class BoardController {
 
     @PostMapping("/modify/{id}")
     @ResponseBody
-    public ResponseEntity<HashMap<String, String>> modify( @PathVariable("id") Long id, @RequestBody BoardRegisterRequest brr, HttpServletRequest request, HttpServletResponse response, Model m) throws IOException {
+    public ResponseEntity<HashMap<String, String>> modify( @PathVariable("id") Long id, @RequestBody BoardRegisterRequest brr) throws IOException {
         boardService.modifyPost(id, brr);
-        System.out.println("is True? = " + "yes");
         HashMap<String, String> map = new HashMap<>();
         map.put("msg","수정이 완료됐습니다.");
-        map.put("url","/secretgarden/board");
+        map.put("url",HOME_PATH+"/board");
         return new ResponseEntity<HashMap<String, String>>(map,HttpStatus.OK);
 
 
     }
     @PostMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<HashMap<String, String>> deletePost(Principal principal,HttpServletRequest request, HttpServletResponse response, Authentication authentication, @PathVariable("id") Long id, String userId, Model m) {
+    public ResponseEntity<HashMap<String, String>> deletePost(Principal principal,HttpServletRequest request, HttpServletResponse response, @PathVariable("id") Long id) {
         // JPA 영속상태때문에 바로 추출할 수가 없다.
         HashMap<String,String> map = new HashMap<>();
 
@@ -133,7 +132,7 @@ public class BoardController {
         }
 
         map.put("msg","게시글이 삭제되었습니다.");
-        map.put("url","/secretgarden/board");
+        map.put("url",HOME_PATH+"/board");
         boardService.deletePost(id);
         return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
@@ -151,9 +150,7 @@ public class BoardController {
         m.addAttribute("pageDto",pageDto);
         m.addAttribute("category",category);
         m.addAttribute("keyword",keyword);
-
-        // RedirectAttribute 어쩌구는 redirect되기 때문에 get방식으로 들어가서 body에 담을 수가 없구나...
-
+        
 
 
         return "board";
@@ -170,10 +167,10 @@ public class BoardController {
         PrintWriter out = null;
         try {
             out = response.getWriter();
-            out.println("<script>alert('잘못된 접근입니다.'); location.href='/secretgarden/board';</script>");
+            out.println("<script>alert('잘못된 접근입니다.'); location.href='"+HOME_PATH+"/board';</script>");
             out.flush();
         } catch (IOException e) {
-            out.println("<script>alert('오류가 발생하였습니다.'); location.href='/secretgarden/board';</script>");
+            out.println("<script>alert('오류가 발생하였습니다.'); location.href='"+HOME_PATH+"/board';</script>");
             out.flush();
             throw new RuntimeException(e);
         }
@@ -182,7 +179,7 @@ public class BoardController {
 
     public User getUserInfo(Authentication auth) {
          String id = ((PrincipalDetails)(auth.getPrincipal())).getUsername();
-        // JPA 영속상태때문에...
+        // JPA 영속상태때문에 한 번 더 쿼리를 해와야함
         User user =  userService.findUser(id);
 
         return user;

@@ -1,9 +1,5 @@
 package com.yezi.secretgarden.auth;
 
-import com.yezi.secretgarden.domain.User;
-import com.yezi.secretgarden.service.LoggerService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -57,10 +57,7 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 //        }else {
 //            errorMessage = "알 수 없는 오류로 로그인 요청을 처리할 수 없습니다. 관리자에게 문의하세요.";
 //        }
-//        request.setAttribute("msg", errorMessage);
-//        request.setAttribute("error",exception);
-//        response.sendRedirect("/secretgarden/login");
-//        System.out.println(1111);
+//
 //        response.setStatus(HttpStatus.FORBIDDEN.value());
 //        JsonObject jsonObject = new JsonObject();
 //        jsonObject.addProperty("msg", "인증 요청이 거부되었습니다.");
@@ -70,7 +67,8 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 //        printWriter.write(json);
 //        printWriter.flush();
 //        response.setStatus(HttpStatus.FORBIDDEN.value());
-//        System.out.println("sadfasdfsdaf");
+//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//        response.
         response.sendRedirect("/secretgarden/login");
 
     }

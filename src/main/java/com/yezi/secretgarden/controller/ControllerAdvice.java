@@ -1,7 +1,7 @@
 package com.yezi.secretgarden.controller;
 
-import com.yezi.secretgarden.service.LoggerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @org.springframework.web.bind.annotation.ControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class ControllerAdvice {
-    private final LoggerService loggerService;
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -23,9 +23,9 @@ public class ControllerAdvice {
     public ResponseEntity<String> handle(BindException e) {
         BindingResult b = e.getBindingResult();
         for(ObjectError error : b.getAllErrors()) {
-            loggerService.errorLoggerTest(error.toString());
+            log.error(error.toString());
         }
-        loggerService.errorLoggerTest(e.getMessage());
+        log.error(e.getMessage());
         // redirect
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
