@@ -125,10 +125,10 @@
 
                         <div class="mb-3">
                             <label for ="id">작성자</label>
-                            <div th:text="${@jwtTokenUtil.getLoginId(#request)}" name="id" id="id" class="mb-3"></div>
+                            <div th:text="${userId}" name="id" id="id" class="mb-3"></div>
                             <label for="title" class="form-label">제목</label>
                             <input type="text" name="title" id="title" class="form-control" th:value="${board?.title}"/>
-                            <input type="hidden" name="userId" th:value="${userId}"/>
+                            <input type="hidden" name="userId" th:value="${@jwtTokenUtil.getLoginId(#request)}"/>
                         </div>
                         <div class="mb-3">
                             <label for="content" class="form-label">내용</label>

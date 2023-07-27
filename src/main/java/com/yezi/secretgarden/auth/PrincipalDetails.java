@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 
@@ -15,30 +16,42 @@ import java.util.Collection;
 public class PrincipalDetails implements UserDetails {
 
 
-    private User user;
-    public PrincipalDetails(User target) {
-        this.user = target;
+    String id;
+    String auth;
+    String pw;
+    public PrincipalDetails(String id, String auth, String pw) {
+        this.id = id;
+        this.auth = auth;
+        this.pw = pw;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        user.getRoleList().forEach(r->{
-            authorities.add(()-> r);
-        });
+        String[] auths = auth.split(",");
+        for(String auth : auths) {
+            authorities.add(new GrantedAuthority() {
+                @Override
+                public String getAuthority() {
+                    return auth;
+                }
+            });
+        }
         return authorities;
     }
-    public User getUser() {
-        return user;
+
+    public String getStringAuth() {
+        return this.auth;
     }
+
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return pw;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.id;
     }
 
     @Override

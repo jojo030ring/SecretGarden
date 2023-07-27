@@ -7,6 +7,7 @@ import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
 import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
 import com.yezi.secretgarden.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import java.nio.file.Path;
 
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터 체인에 등록이 됨
@@ -29,10 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     LoginFailHandler loginFailHandler;
     protected void configure(HttpSecurity http) throws Exception {
 
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager());
-        //jwtAuthenticationFilter.setFilterProcessesUrl("/secretgarden/login");
+        // 무시하셔도 됩니다
+//        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager());
+//        jwtAuthenticationFilter.setFilterProcessesUrl("/secretgarden/login");
 //        jwtAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailHandler());
-        JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(authenticationManager(),userService);
+//        JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(authenticationManager(),userService);
 
         http
 
@@ -40,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(corsConfig.corsFilter())
                 .csrf().disable()
                 // 세션 사용하지 않음 > jwt 사용하지 않을 경우엔 빼주어야 함
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
                 .formLogin().disable()
@@ -55,39 +59,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 /*
                  *   3번 설명 보자...
                  */
-
                 .authorizeRequests()
                 .antMatchers("/secretgarden/login", "/secretgarden/register").permitAll()
-                .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden/","/secretgarden/post/**")
+                .antMatchers("/secretgarden/diary/**","/secretgarden/board/**", "/secretgarden","/secretgarden/post/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-
+                .anyRequest().permitAll()
                 .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
-                .addFilterAt(jwtAuthorizationFilter, BasicAuthenticationFilter.class)
+                .addFilterAt(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class) // 파라미터가 하나 있는데 .. AuthenticationManager임 근데 이건 WebSecurityConfigurerAdapter에 들어있어서 메서드만 호출해주면 됨
+                .addFilterAt(new JwtAuthorizationFilter(authenticationManager()), BasicAuthenticationFilter.class)
+
                 .exceptionHandling()
                 .accessDeniedHandler(new AuthorizationAccessDeniedHandler())
                 .authenticationEntryPoint(new AuthenticationEntryPoint());
-
-        // http.formLogin().loginPage("/secretgarden/login").loginProcessingUrl("/secretgarden/login").disable(); >> form login을 사용하지 않기 때문에 새로운 필터를 만들어야 함
-/////// jwt 안 쓸 때의 스프링 시큐리티 ///////
-//        http.authorizeRequests().antMatchers("/secretgarden/").authenticated()
-////                .antMatchers("/secretgarden/manager/**").hasAuthority("ROLE_MANAGER")
-////                .antMatchers("/secretgarden/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
-////                .anyRequest().permitAll()
-//                .antMatchers("/secretgarden/board/**","/secretgarden/diary/**").authenticated()
-//                .and()
-//                .formLogin()
-//                .loginPage("/secretgarden/login") // 권한이 없는 경우 로그인 페이지로 자동으로 이동시킴
-//                .usernameParameter("id") // PrincipalDetailsService에서 load... 함수에 들어가는 username 파라미터의 이름을 id로 정해줌
-//                .loginProcessingUrl("/secretgarden/login") // login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해줌 >> controller에 /login 적어주지 않아도 됨
-//                .defaultSuccessUrl("/secretgarden/") // 로그인에 성공하면 /로 이동
-//                .failureUrl("/secretgarden/register");
 
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/templates/**", "/static/**", "secretgarden/register","secretgarden/login");
+
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        web.ignoring().antMatchers("secretgarden/login","secretgarden/register","/docs/5.0/assets/brand/bootstrap-logo.svg","/img/**");
+
+
     }
 
 }

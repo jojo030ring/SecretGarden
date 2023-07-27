@@ -69,8 +69,8 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 //        PrintWriter printWriter = response.getWriter();
 //        printWriter.write(json);
 //        printWriter.flush();
-        response.setStatus(HttpStatus.FORBIDDEN.value());
-        System.out.println("sadfasdfsdaf");
+//        response.setStatus(HttpStatus.FORBIDDEN.value());
+//        System.out.println("sadfasdfsdaf");
         response.sendRedirect("/secretgarden/login");
 
     }

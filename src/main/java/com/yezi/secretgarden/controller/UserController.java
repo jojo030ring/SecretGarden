@@ -1,5 +1,6 @@
 package com.yezi.secretgarden.controller;
 
+import com.yezi.secretgarden.auth.PrincipalDetails;
 import com.yezi.secretgarden.domain.request.UserRegisterRequest;
 import com.yezi.secretgarden.service.LoggerService;
 import com.yezi.secretgarden.service.UserService;
@@ -33,7 +34,8 @@ public class UserController {
         value = "/register"
         , headers="Accept=application/json")
     @ResponseBody
-    public ResponseEntity<HashMap<String,String>> register( @RequestBody @Valid UserRegisterRequest uRRequest) { // @Valid 테스트를 위해서 빼놓음
+    // test를 위해 @Valid 빼놓음
+    public ResponseEntity<HashMap<String,String>> register( @RequestBody  UserRegisterRequest uRRequest) { // @Valid 테스트를 위해서 빼놓음
         userService.registerUser(uRRequest);
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","회원 가입을 완료했습니다.");
@@ -43,7 +45,12 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(HttpServletRequest request) {
+        Cookie token = WebUtils.getCookie(request,"token");
+        if(token != null) {
+            return "redirect:/secretgarden/";
+        }
+
         return "login";
     }
 

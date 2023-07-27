@@ -9,6 +9,7 @@ import com.yezi.secretgarden.domain.request.SearchCondition;
 import com.yezi.secretgarden.service.BoardService;
 import com.yezi.secretgarden.service.PageService;
 import com.yezi.secretgarden.service.SearchService;
+import com.yezi.secretgarden.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -33,6 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/secretgarden")
 public class BoardController {
+    private final UserService userService;
     private final BoardService boardService;
     private final PageService pageService;
     private final SearchService searchService;
@@ -49,8 +51,9 @@ public class BoardController {
     }
     @GetMapping("/board/{id}")
     public String getBoard(Principal principal,HttpServletRequest request, HttpServletResponse response, Model m, @PathVariable("id") Long id, RedirectAttributes ra) throws IOException {
-        String userId = principal.getName();
+
         Board board = boardService.getBoard(id);
+        String userId = board.getUser().getUsername();
         if(board==null) {
             doInvalidRequestAction(request,response);
         }
@@ -64,8 +67,7 @@ public class BoardController {
     @GetMapping("/post")
     public String postForm(Principal principal, HttpServletRequest request, Model m) {
         String id = principal.getName();
-        System.out.println("id = " + id);
-        m.addAttribute("id",id);
+        m.addAttribute("userId",id);
         m.addAttribute("MODE","POST_MODE");
 
         return "board_reg";
@@ -117,16 +119,19 @@ public class BoardController {
     }
     @PostMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<HashMap<String, String>> deletePost(Authentication authentication, @PathVariable("id") Long id, String userId, Model m) {
+    public ResponseEntity<HashMap<String, String>> deletePost(Principal principal,HttpServletRequest request, HttpServletResponse response, Authentication authentication, @PathVariable("id") Long id, String userId, Model m) {
         // JPA 영속상태때문에 바로 추출할 수가 없다.
-        User user = getUserInfo(authentication);
         HashMap<String,String> map = new HashMap<>();
 
-        if (user.getUsername().equals(userId)) {
-            map.put("msg","잘못된 요청입니다.");
-            map.put("url","/secretgarden/board/"+id);
+        Board board = boardService.getBoard(id);
+        String loginId = principal.getName();
+
+        if(board==null || !requestValidUser(loginId,board)) {
+            doInvalidRequestAction(request,response);
             return new ResponseEntity<HashMap<String, String>>(map,HttpStatus.BAD_REQUEST);
+
         }
+
         map.put("msg","게시글이 삭제되었습니다.");
         map.put("url","/secretgarden/board");
         boardService.deletePost(id);
@@ -160,19 +165,26 @@ public class BoardController {
         return board.getUser().getUsername().equals(userId);
     }
 
-    public void doInvalidRequestAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doInvalidRequestAction(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.println("<script>alert('잘못된 접근입니다.'); location.href='/secretgarden/board';</script>");
-        out.flush();
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            out.println("<script>alert('잘못된 접근입니다.'); location.href='/secretgarden/board';</script>");
+            out.flush();
+        } catch (IOException e) {
+            out.println("<script>alert('오류가 발생하였습니다.'); location.href='/secretgarden/board';</script>");
+            out.flush();
+            throw new RuntimeException(e);
+        }
+
     }
 
     public User getUserInfo(Authentication auth) {
-        User userFromPrincipal = ((PrincipalDetails)(auth.getPrincipal())).getUser();
+         String id = ((PrincipalDetails)(auth.getPrincipal())).getUsername();
         // JPA 영속상태때문에...
-        User user = User.builder().username(userFromPrincipal.getUsername())
-                .name(userFromPrincipal.getName()).password(userFromPrincipal.getPassword()).email(userFromPrincipal.getEmail())
-                .phonenum(userFromPrincipal.getPhonenum()).build();
+        User user =  userService.findUser(id);
+
         return user;
     }
 

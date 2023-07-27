@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.Date;
 
@@ -39,12 +41,10 @@ import java.util.Date;
  */
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    private UserService userService;
     private JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
     // spring security filter는 spring의 bean을 주입받을 수 없어 외부에서 받아옴
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserService userService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
-        this.userService = userService;
 
     }
 
@@ -53,45 +53,50 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 인증이나 권한이 필요한 주소 요청이 있을 때 해당 필터를 타게 됨
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        logger.info(SecurityContextHolder.getContext());
-
-        String jwt = jwtTokenUtil.getJwtFromCookie(request); // cookie에서 원형 jwt를 받아옴
+        
+        String jwt = jwtTokenUtil.getPureJWT(jwtTokenUtil.decodeFromCookieToJWT(request)); // cookie에서 원형 jwt를 받아옴
         // jwt 토큰을 검증해서 정상적인 토큰인지 확인
-        if (jwt == null || !jwt.startsWith("Bearer ")) {
-            // jwt가 null이거나 jwt가 Bearer로 시작하지 않음
-            // 체인을 돌려서 다음 필터로 이전해줌
+        /**
+         * 문제가 생기는 경우
+         * - 토큰이 만료된 경우 > jjwt 라이브러리의 parsing 부분에 의해 exception이 발생하고 validateToken이 이를 잡는다
+         * - 토큰이 변조된 경우 >> 위와 동일
+         * - null 값이 들어가는 경우 >> 위와 동일
+         * - 지원되지 않는 토큰인 경우 >> 위와 동일
+         */
+        // 토큰이 없거나 토큰에 문제가 생긴 경우인데, 토큰이 있는 경우
+        if(jwt== null || !jwtTokenUtil.validateToken(jwt)) {
+            // token이라고 명해진 쿠키를 받아온다
+            Cookie tokenInCookie = WebUtils.getCookie(request,"token");
+            // token이 존재하면 cookie를 없애주어야 한다
+            if(tokenInCookie != null) {
+                tokenInCookie.setMaxAge(0);
+                response.addCookie(tokenInCookie);
+
+            }
+            // 필터 넘김
             chain.doFilter(request,response);
             return;
         }
-        // 정상적인 요청이면, Bearer를 공백으로 치환
-        jwt = jwt.replace("Bearer ", "");
-        // cookie에서 가져온 jwt를 이용하여 id를 추출함
-        String id = jwtTokenUtil.getLoginId(jwt);
-            // id가 null이 아닐 경우,
-            if (id != null) {
-                // userEntity를 받아옴
-                User userEntity = userService.findUser(id);
-                // userEntity가 없다 == DB에 들어있지 않다, 근데 id는 있다?
-                if(userEntity == null) {
-                    // db가 삭제되어있는데 쿠키는 남아있는 경우
-                    // cookie를 삭제해준다
-                    Cookie cookie = WebUtils.getCookie(request, "token");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                    chain.doFilter(request,response); // 다음 필터로 이동시킨다
-                    return;
-                }
-                // Authentication을 위한 PrincipalDetails를 하고 userEntity를 넣어준다.
-                PrincipalDetails principalDetails = new PrincipalDetails(userEntity);
-                Authentication authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                principalDetails,
-                                null,
-                                principalDetails.getAuthorities());
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+        // 정상적인 요청이면, Bearer를 공백으로 치환하고(JwtTokenUtil 내에서 자동적으로 이뤄짐) id, auth를 얻음
+        String id = jwtTokenUtil.getLoginId(jwt);
+        String auth = jwtTokenUtil.getAuth(jwt);
+        // id가 null이 아닐 경우,
+        if (id != null) {
+
+            // db가 삭제되어있는데 쿠키는 남아있는 경우는 어떡하지?
+            // 이거는 JwtAuthenticateFtiler 부분에서 걸러짐
+            // authenticate를 호출하면 자동적으로 PrincipalDetailsService내의 loadby... 메서드를 호출하고 userEntity를 조회하게 된다
+            // 여기서 문제가 발생하면 exception이 발생 >> unsuccessfulAuthentication 메서드로 이동, 처리
+            PrincipalDetails principalDetails = new PrincipalDetails(id,auth,null); // password는 저장하지 않으므로 담아주지 않는다.
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            principalDetails,
+                            null,
+                            principalDetails.getAuthorities());
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
 
 

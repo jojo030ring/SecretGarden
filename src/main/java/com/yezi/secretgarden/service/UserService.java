@@ -2,7 +2,6 @@ package com.yezi.secretgarden.service;
 
 import com.yezi.secretgarden.domain.User;
 import com.yezi.secretgarden.domain.request.UserRegisterRequest;
-import com.yezi.secretgarden.exception.InValidPwException;
 import com.yezi.secretgarden.repository.ModifyRegisterRequest;
 import com.yezi.secretgarden.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,22 +47,22 @@ public class UserService {
     /**
      *
      */
-    @Transactional
-    public void modifyUser(ModifyRegisterRequest modifyRegisterRequest, String id) throws InValidPwException {
-        // 변경 감지 기능을 사용하여 수정작업을 진행
-        // 영속성 컨텍스트로 등록
-        User user = findUser(id);
-        String previousPw = user.getPassword();
-        if(previousPw.equals(modifyRegisterRequest.getPw())) {
-            throw new InValidPwException();
-        }
-        user.setEmail(modifyRegisterRequest.getEmail_id()+"@"+modifyRegisterRequest.getUser_domain());
-        user.setPhonenum(modifyRegisterRequest.getPhonenum());
-        // transaction이 끝나고 commit되면 자동으로 업데이트 됨
-
-
-
-    }
+//    @Transactional
+//    public void modifyUser(ModifyRegisterRequest modifyRegisterRequest, String id) throws InValidPwException {
+//        // 변경 감지 기능을 사용하여 수정작업을 진행
+//        // 영속성 컨텍스트로 등록
+//        User user = findUser(id);
+//        String previousPw = user.getPassword();
+//        if(previousPw.equals(modifyRegisterRequest.getPw())) {
+//            throw new InValidPwException();
+//        }
+//        user.setEmail(modifyRegisterRequest.getEmail_id()+"@"+modifyRegisterRequest.getUser_domain());
+//        user.setPhonenum(modifyRegisterRequest.getPhonenum());
+//        // transaction이 끝나고 commit되면 자동으로 업데이트 됨
+//
+//
+//
+//    }
 
 
 
