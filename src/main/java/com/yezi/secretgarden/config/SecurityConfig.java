@@ -1,25 +1,5 @@
 package com.yezi.secretgarden.config;
 
-import com.yezi.secretgarden.auth.AuthenticationEntryPoint;
-import com.yezi.secretgarden.auth.AuthorizationAccessDeniedHandler;
-import com.yezi.secretgarden.auth.LoginFailHandler;
-import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
-import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
-import com.yezi.secretgarden.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-import java.nio.file.Path;
-
 //@Configuration
 //@EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터 체인에 등록이 됨
 //@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured annotation 활성화 / pre + postAuthorize 어노테이션 활성화

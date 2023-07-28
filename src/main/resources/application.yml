@@ -57,8 +57,7 @@ server:
   error:
     whitelabel:
       enabled: false
-  servlet:
-    context-path : /secretgarden
+
 # Jwt Token Provider
 jwt:
   secret : a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ

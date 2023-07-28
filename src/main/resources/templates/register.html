@@ -140,7 +140,7 @@
             // alert(JSON.stringify(object)); 잘 나옴
 
             $.ajax({
-                url:"/secretgarden/register",
+                url:"/register",
                 method:"post",
                 dataType:"text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
                                   // text로 받는게 맞다
@@ -153,8 +153,8 @@
                     alert(msg);
                     location.href=url;
                 },
-                error: function(request,status,error) {
-                    alert("다시 입력해주세요!");
+                error: function(result) {
+                    alert(result.responseText);
 
                 }
             });

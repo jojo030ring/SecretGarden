@@ -89,7 +89,7 @@ public class BoardController {
         boardService.savePost(user,bRRequest);
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","게시글 등록을 완료했습니다.");
-        map.put("url","/secretgarden/board");
+        map.put("url","/board");
         m.addAttribute("MODE","POST_MODE");
         return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
@@ -116,7 +116,7 @@ public class BoardController {
         boardService.modifyPost(id, brr);
         HashMap<String, String> map = new HashMap<>();
         map.put("msg","수정이 완료됐습니다.");
-        map.put("url","/secretgarden/board");
+        map.put("url","/board");
         return new ResponseEntity<HashMap<String, String>>(map,HttpStatus.OK);
 
 
@@ -126,7 +126,7 @@ public class BoardController {
     public ResponseEntity<HashMap<String, String>> deletePost(Principal principal,HttpServletRequest request, HttpServletResponse response, @PathVariable("id") Long id) {
         // JPA 영속상태때문에 바로 추출할 수가 없다.
         HashMap<String,String> map = new HashMap<>();
-        String redirectPath = "/secretgarden/board";
+        String redirectPath = "/board";
 
         Board board = boardService.getBoard(id);
         String userId = principal.getName();
@@ -173,10 +173,10 @@ public class BoardController {
         PrintWriter out = null;
         try {
             out = response.getWriter();
-            out.println("<script>alert('잘못된 접근입니다.'); location.href='/secretgarden/board';</script>");
+            out.println("<script>alert('잘못된 접근입니다.'); location.href='/board';</script>");
             out.flush();
         } catch (IOException e) {
-            out.println("<script>alert('오류가 발생하였습니다.'); location.href='/secretgarden/board';</script>");
+            out.println("<script>alert('오류가 발생하였습니다.'); location.href='/board';</script>");
             out.flush();
             throw new RuntimeException(e);
         }

@@ -18,14 +18,14 @@
             }
 
             $.ajax({
-                url: "/secretgarden/login",
+                url: "/login",
                 method: "post",
                 dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
                 // text로 받는게 맞다
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(object),
                 success: function (data,textStatus,jqXHR) {
-                    location.href = "/secretgarden/";
+                    location.href = "/";
                 },
                 error: function (jqXHR, textStatus, error) {
                     alert("로그인에 실패하셨습니다.");

@@ -38,7 +38,7 @@ public class UserController {
         userService.registerUser(uRRequest);
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","회원 가입을 완료했습니다.");
-        map.put("url","/secretgarden/login");
+        map.put("url","/login");
         return new ResponseEntity<HashMap<String, String>>(map,HttpStatus.OK);
 
     }

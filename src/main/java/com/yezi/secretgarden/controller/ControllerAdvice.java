@@ -12,6 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
+
 @org.springframework.web.bind.annotation.ControllerAdvice
 @RequiredArgsConstructor
 @Slf4j
@@ -42,5 +45,16 @@ public class ControllerAdvice {
 //        // redirect
 //        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 //    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> duplicateMember(Exception e) {
+
+        log.error(e.getMessage());
+        String result = "중복된 회원입니다. 다시 시도하세요.";
+
+        // redirect
+        return new ResponseEntity<String>(result, HttpStatus.BAD_REQUEST);
+    }
 
 }

@@ -42,13 +42,15 @@ public class BoardService {
 
     @Transactional
     public Board getBoard(Long id) {
+
+        boardRepository.increaseCnt(id);
         return boardRepository.getBoard(id);
     }
 
     @Transactional
     public void addCount(Long id) {
         Board board = boardRepository.getBoard(id);
-        board.setCnt(board.getCnt()+1);
+
 
     }
 

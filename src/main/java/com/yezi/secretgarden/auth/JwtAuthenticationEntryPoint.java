@@ -1,35 +1,14 @@
 package com.yezi.secretgarden.auth;
 // https://mighty96.github.io/til/access-authentication/
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nonapi.io.github.classgraph.json.JSONUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URLEncoder;
-import java.util.HashMap;
 
 /**
  * 가입 되지 않은 사용자의 접근
@@ -37,7 +16,7 @@ import java.util.HashMap;
 @Slf4j
 @Component
 
-public class AuthenticationEntryPoint implements org.springframework.security.web.AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements org.springframework.security.web.AuthenticationEntryPoint {
 
 
     @Override
@@ -69,7 +48,7 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 //        response.setStatus(HttpStatus.FORBIDDEN.value());
 //        response.setStatus(HttpStatus.UNAUTHORIZED.value());
 //        response.
-        response.sendRedirect("/secretgarden/login");
+        response.sendRedirect("/login");
 
     }
 

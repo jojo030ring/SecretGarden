@@ -12,26 +12,26 @@
             $("#postBtn").click(function() {
                 switch (mode) {
                     case "POST_MODE" :
-                        submitData("/secretgarden/post");
+                        submitData("/post");
                         break;
                     case "MODIFY_MODE":
-                        submitData("/secretgarden/modify/"+id);
+                        submitData("/modify/"+id);
                         break;
                 }
             });
             $("#modBtn").click(function() {
-                location.href="/secretgarden/modify/"+id;
+                location.href="/modify/"+id;
             });
             $("#delBtn").click(function() {
-                deleteData("/secretgarden/delete/"+id);
+                deleteData("/delete/"+id);
             });
             $("#listBtn").click(function() {
-                location.href="/secretgarden/board";
+                location.href="/board";
             });
         });
 
         function deleteData(url) {
-            let failUrl = "/secretgarden/board";
+            let failUrl = "/board";
             $.ajax({
                 url: url,
                 method: "GET",

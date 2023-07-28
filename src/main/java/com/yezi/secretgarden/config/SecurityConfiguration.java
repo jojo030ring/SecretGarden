@@ -1,7 +1,7 @@
 package com.yezi.secretgarden.config;
 
-import com.yezi.secretgarden.auth.AuthenticationEntryPoint;
-import com.yezi.secretgarden.auth.AuthorizationAccessDeniedHandler;
+import com.yezi.secretgarden.auth.JwtAuthenticationEntryPoint;
+import com.yezi.secretgarden.auth.JwtAuthorizationAccessDeniedHandler;
 import com.yezi.secretgarden.auth.LoginFailHandler;
 import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
 import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
@@ -60,8 +60,8 @@ public class SecurityConfiguration {
                 .addFilterAt(jwtAuthorizationFilter, BasicAuthenticationFilter.class)
 
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-                    httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new AuthorizationAccessDeniedHandler())
-                            .authenticationEntryPoint(new AuthenticationEntryPoint());
+                    httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new JwtAuthorizationAccessDeniedHandler())
+                            .authenticationEntryPoint(new JwtAuthenticationEntryPoint());
                 })
                 .logout()
                 .logoutUrl("/logout")
