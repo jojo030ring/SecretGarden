@@ -76,7 +76,7 @@ public class SecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
 
-        // 정적 리소스 파일 및 register, login경로는 시큐리티 관리 대상에서 제외한다
+        // 정적 리소스 파일 및 register, 시큐리티 관리 대상에서 제외한다
         return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).
                 antMatchers("/docs/5.0/assets/brand/bootstrap-logo.svg","/img/**","/register");
 

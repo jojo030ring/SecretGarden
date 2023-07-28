@@ -238,9 +238,11 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
         Cookie cookie = new Cookie("token", URLEncoder.encode(jwtToken, StandardCharsets.UTF_8));
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(JwtTokenUtil.exp.intValue()); // 쿠키의 maxAge를 설정해주지 않으면 브라우저가 종료되는 순간 쿠키가 삭제되므로, 이를 설정해준다.
         response.addCookie(cookie);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+
         response.setStatus(HttpStatus.OK.value());
 
 

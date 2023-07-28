@@ -21,7 +21,7 @@ import java.util.Date;
 public class JwtTokenUtil {
     // JWT Token 발급
     private final String secretKey="a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ";
-    private final Long exp = 500*1000L;
+    public static Long exp = 500*1000L;
     private final Key key;
 
     // Base64로 인코딩 된 비밀키를 hmacsha 방식으로 말아준다.
