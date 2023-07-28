@@ -34,15 +34,13 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("${header.url.secretgarden}")
 @Slf4j
 public class BoardController {
     private final UserService userService;
     private final BoardService boardService;
     private final PageService pageService;
     private final SearchService searchService;
-    @Value("${header.url.secretgarden}")
-    private String HOME_PATH;
+
     @GetMapping("/board")
     // @RequestParam : query param형식의 파라미터 받아옴
     public String boardList(Model m,@RequestParam(defaultValue = "1") int page) {
@@ -85,10 +83,13 @@ public class BoardController {
     public ResponseEntity<HashMap<String, String>> boardPost(Authentication authentication, @RequestBody @Valid BoardRegisterRequest bRRequest, Model m) {
         // JPA 영속상태때문에 바로 추출할 수가 없다.
         User user = getUserInfo(authentication);
+        System.out.println("user.getUsername() = " + user.getUsername());
+        bRRequest.setId(user.getUsername());
+        System.out.println("bRRequest.getId() = " + bRRequest.getId());
         boardService.savePost(user,bRRequest);
         HashMap<String,String> map = new HashMap<>();
         map.put("msg","게시글 등록을 완료했습니다.");
-        map.put("url",HOME_PATH+"/board");
+        map.put("url","/secretgarden/board");
         m.addAttribute("MODE","POST_MODE");
         return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
@@ -115,28 +116,29 @@ public class BoardController {
         boardService.modifyPost(id, brr);
         HashMap<String, String> map = new HashMap<>();
         map.put("msg","수정이 완료됐습니다.");
-        map.put("url",HOME_PATH+"/board");
+        map.put("url","/secretgarden/board");
         return new ResponseEntity<HashMap<String, String>>(map,HttpStatus.OK);
 
 
     }
-    @PostMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<HashMap<String, String>> deletePost(Principal principal,HttpServletRequest request, HttpServletResponse response, @PathVariable("id") Long id) {
         // JPA 영속상태때문에 바로 추출할 수가 없다.
         HashMap<String,String> map = new HashMap<>();
+        String redirectPath = "/secretgarden/board";
 
         Board board = boardService.getBoard(id);
-        String loginId = principal.getName();
+        String userId = principal.getName();
 
-        if(board==null || !requestValidUser(loginId,board)) {
-            doInvalidRequestAction(request,response);
-            return new ResponseEntity<HashMap<String, String>>(map,HttpStatus.BAD_REQUEST);
+        if(board==null || !requestValidUser(userId,board)) {
+            map.put("msg", "삭제에 실패하였습니다.");
+            map.put("url", redirectPath);
+            return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.BAD_REQUEST);
 
         }
-
         map.put("msg","게시글이 삭제되었습니다.");
-        map.put("url",HOME_PATH+"/board");
+        map.put("url",redirectPath);
         boardService.deletePost(id);
         return new ResponseEntity<HashMap<String,String>>(map,HttpStatus.OK);
     }
@@ -171,10 +173,10 @@ public class BoardController {
         PrintWriter out = null;
         try {
             out = response.getWriter();
-            out.println("<script>alert('잘못된 접근입니다.'); location.href='"+HOME_PATH+"/board';</script>");
+            out.println("<script>alert('잘못된 접근입니다.'); location.href='/secretgarden/board';</script>");
             out.flush();
         } catch (IOException e) {
-            out.println("<script>alert('오류가 발생하였습니다.'); location.href='"+HOME_PATH+"/board';</script>");
+            out.println("<script>alert('오류가 발생하였습니다.'); location.href='/secretgarden/board';</script>");
             out.flush();
             throw new RuntimeException(e);
         }

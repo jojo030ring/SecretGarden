@@ -53,7 +53,7 @@
 
         <div class="container min-vh-50 py-2 w-75">
             <div class="table-responsive ">
-                <a th:href="@{/secretgarden/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
+                <a th:href="@{/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
 
             <table class="table text-center">
                 <thead>
@@ -69,7 +69,7 @@
                 <tr th:each="board : ${boardList}">
                     <th class="col-md-1" scope="col" th:text="${board.id}"></th>
                     <td class="col-md-3" th:text="${board.user.username}"></a></td>
-                    <td class="col-md-4"><a th:href="@{/secretgarden/board/{boardId}(boardId=${board.id})}" th:text="${board.title}"></a></td>
+                    <td class="col-md-4"><a th:href="@{/board/{boardId}(boardId=${board.id})}" th:text="${board.title}"></a></td>
                     <td class="col-md-1" th:text="${board.cnt}"></td>
                     <td class="col-md-3" th:text ="${#temporals.format(board.regdate, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 </tr>
@@ -81,7 +81,7 @@
         </div>
         </div>
         <!-- search -->
-        <form id="searchForm" method="get" action="/secretgarden/search">
+        <form id="searchForm" method="get" action="/search">
 
             <div class="input-group mb-3 mx-auto w-25">
                 <div class="w-25">
@@ -102,29 +102,29 @@
             <ul class="pagination justify-content-center">
 
                     <li th:if = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:class="page-item" th:style="${pageDto.prev ? 'display:block' :'display:none'}">
-                        <a class="page-link" th:href="@{/secretgarden/board?page={num} (num=${pageDto.endPage-pageDto.pageLimit})}">Prev</a>
+                        <a class="page-link" th:href="@{/board?page={num} (num=${pageDto.endPage-pageDto.pageLimit})}">Prev</a>
                     </li>
                     <li th:unless = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:class="page-item" th:style="${pageDto.prev ? 'display:block' :'display:none'}">
-                        <a class="page-link" th:href="@{/secretgarden/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${pageDto.endPage-pageDto.pageLimit})}">Prev</a>
+                        <a class="page-link" th:href="@{/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${pageDto.endPage-pageDto.pageLimit})}">Prev</a>
                     </li>
 
 
 
                 <th:block th:with="start=${pageDto.startPage}, end=${pageDto.endPage}">
                     <li th:if = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" class="page-item" th:each="num : ${#numbers.sequence(start,end)}">
-                        <a class="page-link" th:href="@{/secretgarden/board?page={num} (num=${num})}" th:text="${num}"></a>
+                        <a class="page-link" th:href="@{/board?page={num} (num=${num})}" th:text="${num}"></a>
                     </li>
                     <li th:unless ="${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" class="page-item" th:each="num : ${#numbers.sequence(start,end)}">
-                        <a class="page-link" th:href="@{/secretgarden/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${num}) }" th:text="${num}" ></a>
+                        <a class="page-link" th:href="@{/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${num}) }" th:text="${num}" ></a>
                     </li>
                 </th:block>
 
                     <li th:if ="${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:style="${pageDto.next ? 'display:block' :'display:none'}">
                         <a class="page-link"
-                           th:href="@{/secretgarden/board?page={num} (num=${pageDto.endPage+1})}">Next</a>
+                           th:href="@{/board?page={num} (num=${pageDto.endPage+1})}">Next</a>
                     </li>
                     <li th:unless = "${#strings.isEmpty(category) or #strings.isEmpty(keyword)}" th:class="page-item" th:style="${pageDto.next ? 'display:block' :'display:none'}">
-                        <a class="page-link" th:href="@{/secretgarden/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${pageDto.endPage+1})}">Next</a>
+                        <a class="page-link" th:href="@{/search/?category={category}&keyword={keyword}&page={num} (category=${category},keyword=${keyword}, num=${pageDto.endPage+1})}">Next</a>
                     </li>
 
             </ul>

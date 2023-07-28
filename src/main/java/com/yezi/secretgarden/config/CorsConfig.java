@@ -20,7 +20,7 @@ public class CorsConfig {
         config.addAllowedOrigin("*");       // 모든 ip의 응답을 허용
         config.addAllowedHeader("*");       // 모든 header에 응답을 허용
         config.addAllowedMethod("*");       // 모든 method에 응답을 허용
-        source.registerCorsConfiguration("/secretgarden/**",config);
+        source.registerCorsConfiguration("/**",config);
 
         return new CorsFilter(source);
 

@@ -9,12 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("${header.url.secretgarden}")
 public class HomeController {
-    @Value("${header.url.secretgarden}")
-    private String HOME_PATH;
+
     @GetMapping("/")
     public String home(HttpServletRequest request, HttpServletResponse response) {
-        return "redirect:"+HOME_PATH+"/board";
+        return "redirect:/board";
     }
 }

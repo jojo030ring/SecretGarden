@@ -17,6 +17,6 @@ import java.io.IOException;
 public class AuthorizationAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        response.sendRedirect("/secretgarden/");
+        response.sendRedirect("/secretgarden");
     }
 }

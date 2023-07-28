@@ -14,7 +14,7 @@
         <p class="fs-5 text-center">당신의 이야기를 들려주세요.</p>
         <!-- 게시판 내용 -->
         <div class="container min-vh-50 py-2 w-75">
-            <a th:href="@{/secretgarden/diary/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
+            <a th:href="@{/diary/post}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
             <div class="table-responsive ">
                 <table class="table accordion table-hover ">
                     <thead>
@@ -37,8 +37,8 @@
                         <tr class="collapse accordion-collapse" id="r1" data-bs-parent=".table">
                             <td colspan="5">
                                 <div class="my-2 ms-auto">
-                                    <a th:href="@{/secretgarden/diary/modify}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
-                                    <a th:href="@{/secretgarden/diary/delete}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
+                                    <a th:href="@{/diary/modify}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
+                                    <a th:href="@{/diary/delete}" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true">글쓰기</a>
                                 </div>
                                 Item 1 detail .. This is the first item's accordion body. It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the .accordion-body, though the transition does limit overflow.
 

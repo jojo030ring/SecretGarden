@@ -67,18 +67,20 @@
                         deleteBox('#emailCheckResult');
                     }
                 });
-                /*
-                $('#id').keyup(function() {
-                    if(!userIdCheck.test($('#id').val())){
-                        $('#idCheckResult').css({
-                            display : 'block',
-                            color : 'red'
-                        }).text("아이디는 4자 이상 최대 20자로 영문, 숫자, _만 입력가능합니다. 입력형식을 확인해주세요.");
 
-                    } else {
-                        $('#idCheckResult').css('display','none');
+                $('#phonenum').keyup(function() {
+                    if(!phonenumCheck.test($('#phonenum').val())) {
+                        $('#phonenumCheckResult').css(
+                            {
+                                display:'block',
+                                color : 'red'
+                            }
+                        );
+                    }  else {
+                        deleteBox('#phonenumCheckResult');
                     }
-                });*/
+                });
+
                 $('#name').keyup(function() {
                     if(!nameCheck.test($('#name').val())){
                         $('#nameCheckResult').css({
@@ -120,8 +122,10 @@
                 if(userIdCheck.test(id)&&phonenumCheck.test(phonenum)&&
                     passwdCheck.test(password)&& emailCheck.test(email) && nameCheck.test(name)){
                     return true;
+                }else {
+                    return false;
+
                 }
-                return false;
             }
         });
 
@@ -186,7 +190,7 @@
                     <div class="mb-3 col-md-12 form-floating">
                         <input type="text" class="form-control" name="id" id="id" placeholder="input id">
                         <label for="id">아이디</label>
-                        <span class = "help-block" id="idCheckResult">아이디는 영문, 숫자, _만 입력가능합니다.(4-20) 입력형식을 확인해주세요.</span>
+                        <span class = "help-block" id="idCheckResult">아이디는 영문, 숫자, _만 입력가능합니다.(4-10) 입력형식을 확인해주세요.</span>
                     </div>
                     <div class="mb-3 col-md-12 form-floating">
                         <input type="password" class="form-control" name="password" id="password" placeholder="input pw">
@@ -233,7 +237,7 @@
 
                 <div class="mb-3 col-md-12 d-flex flex-row justify-content-md-evenly">
                     <button type="button" class="btn btn-outline-success px-5" id="registerBtn">회원가입</button>
-                    <a class="btn btn-outline-secondary px-5" href="index_diary.html" role="button">홈으로</a>
+                    <a class="btn btn-outline-secondary px-5" th:href="@{/}" role="button">홈으로</a>
                 </div>
             </div>
         </form>

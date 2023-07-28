@@ -16,7 +16,6 @@
             for (let i = 0; i < form.length; i++) {
                 object[form[i]['name']] = form[i]['value'];
             }
-            // alert(JSON.stringify(object)); 잘 나옴
 
             $.ajax({
                 url: "/secretgarden/login",
@@ -24,22 +23,12 @@
                 dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
                 // text로 받는게 맞다
                 contentType: "application/json; charset=utf-8",
-                beforeSend :
-                    function(jqXHR) {
-                        jqXHR.setRequestHeader("X-Ajax-Call", "true");
-                    },
                 data: JSON.stringify(object),
                 success: function (data,textStatus,jqXHR) {
-                    // if(data.result =="OK") {
-                    //     alert("OK");
-                    // } else {
-                    //     alert("fail");
-                    // }
                     location.href = "/secretgarden/";
                 },
                 error: function (jqXHR, textStatus, error) {
-
-                    alert("로그인에 실패하셨습니다."+obj.error);
+                    alert("로그인에 실패하셨습니다.");
 
                 }
             });
@@ -76,7 +65,7 @@
                         <ul class="list-group list-group-horizontal-md">
                             <li class="list-group-item border-0 border-end"><a href="./find_id.html">아이디 찾기</a></li>
                             <li class="list-group-item border-0 border-end"><a href="./find_pw.html">비밀번호 찾기</a></li>
-                            <li class="list-group-item border-0"><a href="/secretgarden/register">회원가입</a></li>
+                            <li class="list-group-item border-0"><a th:href="@{/register}">회원가입</a></li>
                         </ul>
                     </div>      
 

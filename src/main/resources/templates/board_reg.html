@@ -23,7 +23,6 @@
                 location.href="/secretgarden/modify/"+id;
             });
             $("#delBtn").click(function() {
-                alert(1);
                 deleteData("/secretgarden/delete/"+id);
             });
             $("#listBtn").click(function() {
@@ -32,20 +31,23 @@
         });
 
         function deleteData(url) {
+            let failUrl = "/secretgarden/board";
             $.ajax({
                 url: url,
-                method: "post",
+                method: "GET",
                 dataType: "text", // ResponseEntity body를 json으로 받으면 controller단에서 처리를 해주어야 함
                 // text로 받는게 맞다
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
+                    alert(result);
                     let obj = JSON.parse(result);
                     alert(obj.msg);
                     location.href = obj.url;
                 },
                 error: function (request, status, error) {
-                    alert("게시글 삭제에 실패했습니다.");
-                    location.href="/secretgarden/board"
+                    let obj = JSON.parse(request.responseText);
+                    alert(obj.msg);
+                    location.href=obj.url;
 
                 }
             });
@@ -57,7 +59,8 @@
             for (let i = 0; i < form.length; i++) {
                 object[form[i]['name']] = form[i]['value'];
             }
-            object['id'] = [[${id}]];
+            object['id'] = $("#id").text();
+            alert(object['id']);
             // alert(JSON.stringify(object)); 잘 나옴
 
             $.ajax({
@@ -125,7 +128,7 @@
 
                         <div class="mb-3">
                             <label for ="id">작성자</label>
-                            <div th:text="${userId}" name="id" id="id" class="mb-3"></div>
+                            <div th:text="${userId}" id="id" class="mb-3"></div>
                             <label for="title" class="form-label">제목</label>
                             <input type="text" name="title" id="title" class="form-control" th:value="${board?.title}"/>
                             <input type="hidden" name="userId" th:value="${@jwtTokenUtil.getLoginId(#request)}"/>

@@ -53,8 +53,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 인증이나 권한이 필요한 주소 요청이 있을 때 해당 필터를 타게 됨
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        
+
         String jwt = jwtTokenUtil.getPureJWT(jwtTokenUtil.decodeFromCookieToJWT(request)); // cookie에서 원형 jwt를 받아옴
+        System.out.println("request.getRequestURI() = " + request.getRequestURI());
         // jwt 토큰을 검증해서 정상적인 토큰인지 확인
         /**
          * 문제가 생기는 경우
