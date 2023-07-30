@@ -127,7 +127,7 @@
 //        System.out.println(" fail ! ");
 //    }
 //}
-package com.yezi.secretgarden.jwt;
+package com.yezi.secretgarden.auth;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -140,6 +140,7 @@ import com.querydsl.jpa.hibernate.SessionHolder;
 import com.yezi.secretgarden.auth.PrincipalDetails;
 
 import com.yezi.secretgarden.domain.request.UserRequestDto;
+import com.yezi.secretgarden.jwt.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;

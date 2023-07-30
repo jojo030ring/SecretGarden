@@ -2,8 +2,8 @@ package com.yezi.secretgarden.config;
 
 import com.yezi.secretgarden.auth.JwtAuthenticationEntryPoint;
 import com.yezi.secretgarden.auth.JwtAuthorizationAccessDeniedHandler;
-import com.yezi.secretgarden.jwt.JwtAuthenticationFilter;
-import com.yezi.secretgarden.jwt.JwtAuthorizationFilter;
+import com.yezi.secretgarden.auth.JwtAuthenticationFilter;
+import com.yezi.secretgarden.auth.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
