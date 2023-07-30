@@ -28,7 +28,9 @@
                     location.href = "/";
                 },
                 error: function (jqXHR, textStatus, error) {
-                    alert("로그인에 실패하셨습니다.");
+                    let resultObj = JSON.parse(jqXHR.responseText.toString());
+                    let message = JSON.parse(resultObj.message);
+                    alert(message.msg);
 
                 }
             });

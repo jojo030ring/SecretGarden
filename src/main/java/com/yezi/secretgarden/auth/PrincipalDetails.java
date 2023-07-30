@@ -12,13 +12,13 @@ import java.util.Collection;
 public class PrincipalDetails implements UserDetails {
 
 
-    String id;
+    String username;
     String auth;
-    String pw;
-    public PrincipalDetails(String id, String auth, String pw) {
-        this.id = id;
+    String password;
+    public PrincipalDetails(String username, String auth, String password) {
+        this.username = username;
         this.auth = auth;
-        this.pw = pw;
+        this.password = password;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return pw;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return this.id;
+        return this.username;
     }
 
     @Override
